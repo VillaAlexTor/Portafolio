@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexander | Seguridad Informática</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <span class="logo-bracket">[</span>A.SEC<span class="logo-bracket">]</span>
+  </div>
+  <div class="nav-links">
+    <a href="#sobre-mi">sobre_mi</a>
+    <a href="#proyectos">proyectos</a>
+    <a href="#skills">skills</a>
+    <a href="#internship">internship</a>
+    <a href="#contacto">contacto</a>
+  </div>
+  <div class="nav-menu" id="navMenu">☰</div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#sobre-mi" onclick="closeMobile()">sobre_mi</a>
+  <a href="#proyectos" onclick="closeMobile()">proyectos</a>
+  <a href="#skills" onclick="closeMobile()">skills</a>
+  <a href="#internship" onclick="closeMobile()">internship</a>
+  <a href="#contacto" onclick="closeMobile()">contacto</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <canvas id="bgCanvas"></canvas>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow" id="heroEyebrow">
+      <span class="eyebrow-line"></span>
+      <span>Informatica · UMSA · La Paz, Bolivia</span>
+    </div>
+
+    <h1 class="hero-name" id="heroName">
+      <span class="name-first">Alexander</span>
+      <span class="name-last">Mamani<span class="name-dot">.</span></span>
+    </h1>
+
+    <div class="hero-role" id="heroRole">
+      <span class="role-prefix">$ </span>
+      <span id="typedText"></span>
+      <span class="cursor">█</span>
+    </div>
+
+    <p class="hero-desc" id="heroDesc">
+      Estudiante de <strong>Informática en la UMSA</strong> especializado en ciberseguridad.<br>
+      Redes, pentesting web, forensia digital y herramientas de seguridad.
+    </p>
+
+    <div class="hero-actions" id="heroActions">
+      <a href="#proyectos" class="btn-primary">
+        <span>Ver proyectos</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#contacto" class="btn-ghost">Contacto</a>
+    </div>
+  </div>
+
+  <!-- FLOATING STATS -->
+  <div class="hero-panel" id="heroPanel">
+    <div class="panel-header">
+      <span class="panel-dot green"></span>
+      <span class="panel-dot yellow"></span>
+      <span class="panel-dot red"></span>
+      <span class="panel-title">system.status</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-row">
+        <span class="panel-key">status</span>
+        <span class="panel-val green">● disponible</span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-key">location</span>
+        <span class="panel-val">La Paz, Bolivia</span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-key">focus</span>
+        <span class="panel-val">network sec</span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-key">internship</span>
+        <span class="panel-val blue">● activo</span>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="panel-stat">
+        <span class="pstat-num">2</span><span class="pstat-label">Web Apps</span>
+      </div>
+      <div class="panel-stat">
+        <span class="pstat-num">12+</span><span class="pstat-label">Herramientas</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint" id="scrollHint">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="sobre-mi" class="section">
+  <div class="container">
+    <div class="section-tag">// 01 — sobre_mi</div>
+    <div class="about-grid">
+      <div class="about-left">
+        <h2 class="section-title">¿Quién soy?</h2>
+        <p>Soy estudiante de la <strong>Carrera de Informática en la UMSA</strong>. Mi área de interés es la <strong>ciberseguridad</strong>: análisis de redes, pentesting web y forensia digital.</p>
+        <p>Actualmente en práctica profesional gestionando infraestructura IT. También desarrollo proyectos propios enfocados en seguridad y automatización.</p>
+        <p>Me gusta entender cómo funcionan los sistemas y —más importante— cómo se rompen.</p>
+
+        <div class="about-badges">
+          <span class="badge">🔐 Ciberseguridad</span>
+          <span class="badge">🌐 Redes</span>
+          <span class="badge">🐧 Linux</span>
+          <span class="badge">🔍 Pentesting</span>
+        </div>
+      </div>
+
+      <div class="about-right">
+        <div class="terminal-card">
+          <div class="tc-bar">
+            <span class="tc-dot r"></span>
+            <span class="tc-dot y"></span>
+            <span class="tc-dot g"></span>
+            <span class="tc-title">alexander@sec:~$</span>
+          </div>
+          <div class="tc-body">
+            <div class="tc-line"><span class="tc-p">$</span> <span class="tc-c">whoami</span></div>
+            <div class="tc-o">alexander_mamani</div>
+            <div class="tc-line"><span class="tc-p">$</span> <span class="tc-c">uname -a</span></div>
+            <div class="tc-o">Informática UMSA · La Paz · 2026</div>
+            <div class="tc-line"><span class="tc-p">$</span> <span class="tc-c">cat enfoque.txt</span></div>
+            <div class="tc-o tc-hl">network security</div>
+            <div class="tc-o tc-hl">web pentesting</div>
+            <div class="tc-o tc-hl">digital forensics</div>
+            <div class="tc-line"><span class="tc-p">$</span> <span class="tc-c">cat internship.log</span></div>
+            <div class="tc-o tc-warn">▶ Fac. Ciencias Geológicas — UMSA</div>
+            <div class="tc-o tc-warn">▶ Mar–Jun 2026 | Network & IT</div>
+            <div class="tc-line"><span class="tc-p">$</span> <span class="tc-cursor-blink">█</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="proyectos" class="section section-alt">
+  <div class="container">
+    <div class="section-tag">// 02 — proyectos</div>
+    <h2 class="section-title">Lo que he construido</h2>
+
+    <div class="projects-grid">
+
+      <div class="project-card" data-index="0">
+        <div class="pc-top">
+          <div class="pc-type">Web App · Seguridad</div>
+          <div class="pc-sec-badge">SEC AUDIT</div>
+        </div>
+        <h3 class="pc-title">Biblioteca Jurídica</h3>
+        <p class="pc-desc">Aplicación web de consulta de documentos legales con Supabase como backend. Implementé análisis de vulnerabilidades, hardening de autenticación OAuth y configuración segura de storage.</p>
+        <div class="pc-tags">
+          <span class="ptag">Supabase</span>
+          <span class="ptag">OAuth 2.0</span>
+          <span class="ptag sec">Auth Hardening</span>
+          <span class="ptag sec">Storage Policy</span>
+        </div>
+        <div class="pc-footer">
+          <a href="#" class="pc-link">Ver proyecto →</a>
+          <span class="pc-status online">● live</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-index="1">
+        <div class="pc-top">
+          <div class="pc-type">Web App · Seguridad</div>
+          <div class="pc-sec-badge">SEC AUDIT</div>
+        </div>
+        <h3 class="pc-title">Proyecto Web 2</h3>
+        <p class="pc-desc">Actualiza este texto con la descripción real de tu segunda aplicación web. Incluye las tecnologías usadas y el análisis de seguridad aplicado.</p>
+        <div class="pc-tags">
+          <span class="ptag">HTML/CSS/JS</span>
+          <span class="ptag sec">OWASP Review</span>
+        </div>
+        <div class="pc-footer">
+          <a href="#" class="pc-link">Ver proyecto →</a>
+          <span class="pc-status online">● live</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-index="2">
+        <div class="pc-top">
+          <div class="pc-type">Herramienta · Security</div>
+        </div>
+        <h3 class="pc-title">Generador de Contraseñas</h3>
+        <p class="pc-desc">Herramienta para generar contraseñas seguras configurables. Calcula entropía y nivel de fortaleza en tiempo real según longitud, caracteres especiales y complejidad.</p>
+        <div class="pc-tags">
+          <span class="ptag">JavaScript</span>
+          <span class="ptag sec">Entropy Calc</span>
+          <span class="ptag sec">Crypto API</span>
+        </div>
+        <div class="pc-footer">
+          <a href="#" class="pc-link">Ver en GitHub →</a>
+          <span class="pc-status">● open source</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-index="3">
+        <div class="pc-top">
+          <div class="pc-type">Script · Red</div>
+        </div>
+        <h3 class="pc-title">Inventario de Red (BAT)</h3>
+        <p class="pc-desc">Script .bat para recopilar hardware y datos de red de múltiples equipos: CPU, RAM, GPU, IP, MAC, gateway. Genera reportes estructurados para análisis de infraestructura.</p>
+        <div class="pc-tags">
+          <span class="ptag">Batch Script</span>
+          <span class="ptag">Windows</span>
+          <span class="ptag sec">Network Recon</span>
+        </div>
+        <div class="pc-footer">
+          <a href="#" class="pc-link">Ver en GitHub →</a>
+          <span class="pc-status">● open source</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS DASHBOARD -->
+<section id="skills" class="section">
+  <div class="container">
+    <div class="section-tag">// 03 — skills_dashboard</div>
+    <h2 class="section-title">Herramientas & Conocimientos</h2>
+
+    <div class="dashboard-grid">
+
+      <!-- RADAR CHART -->
+      <div class="dash-card dash-card-wide">
+        <div class="dash-card-header">
+          <span class="dash-card-title">Áreas de dominio</span>
+          <span class="dash-badge">radar</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- BAR CHART -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">Nivel por herramienta</span>
+          <span class="dash-badge">bar</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="barChart"></canvas>
+        </div>
+      </div>
+
+      <!-- TOOL CATEGORIES -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">Stack de seguridad</span>
+          <span class="dash-badge">list</span>
+        </div>
+        <div class="tool-list">
+          <div class="tl-cat">
+            <div class="tl-cat-label">🔍 Análisis de Red</div>
+            <div class="tl-tools">
+              <span class="tl-tool">Nmap</span>
+              <span class="tl-tool">Wireshark</span>
+              <span class="tl-tool">TraceNG</span>
+            </div>
+          </div>
+          <div class="tl-cat">
+            <div class="tl-cat-label">💀 Pentesting</div>
+            <div class="tl-tools">
+              <span class="tl-tool">Kali Linux</span>
+              <span class="tl-tool">Hashcat</span>
+              <span class="tl-tool">PortSwigger</span>
+            </div>
+          </div>
+          <div class="tl-cat">
+            <div class="tl-cat-label">🔬 Forensia</div>
+            <div class="tl-tools">
+              <span class="tl-tool">Autopsy</span>
+              <span class="tl-tool">PE Studio</span>
+            </div>
+          </div>
+          <div class="tl-cat">
+            <div class="tl-cat-label">🌐 Redes</div>
+            <div class="tl-tools">
+              <span class="tl-tool">GNS3</span>
+              <span class="tl-tool">Cisco PT</span>
+              <span class="tl-tool">VMware</span>
+            </div>
+          </div>
+          <div class="tl-cat">
+            <div class="tl-cat-label">💻 Dev</div>
+            <div class="tl-tools">
+              <span class="tl-tool">JavaScript</span>
+              <span class="tl-tool">Node.js</span>
+              <span class="tl-tool">Supabase</span>
+              <span class="tl-tool">Bash/BAT</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEARNING STATUS -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">En aprendizaje</span>
+          <span class="dash-badge">progress</span>
+        </div>
+        <div class="learning-list">
+          <div class="learn-item">
+            <div class="learn-top">
+              <span class="learn-name">TryHackMe</span>
+              <span class="learn-pct">65%</span>
+            </div>
+            <div class="learn-bar"><div class="learn-fill" style="width:0%" data-w="65"></div></div>
+            <span class="learn-sub">Pre-Security path</span>
+          </div>
+          <div class="learn-item">
+            <div class="learn-top">
+              <span class="learn-name">PortSwigger Academy</span>
+              <span class="learn-pct">40%</span>
+            </div>
+            <div class="learn-bar"><div class="learn-fill" style="width:0%" data-w="40"></div></div>
+            <span class="learn-sub">Web Security fundamentals</span>
+          </div>
+          <div class="learn-item">
+            <div class="learn-top">
+              <span class="learn-name">Kali Linux</span>
+              <span class="learn-pct">55%</span>
+            </div>
+            <div class="learn-bar"><div class="learn-fill" style="width:0%" data-w="55"></div></div>
+            <span class="learn-sub">Herramientas y entorno</span>
+          </div>
+          <div class="learn-item">
+            <div class="learn-top">
+              <span class="learn-name">Redes (CCNA nivel)</span>
+              <span class="learn-pct">70%</span>
+            </div>
+            <div class="learn-bar"><div class="learn-fill" style="width:0%" data-w="70"></div></div>
+            <span class="learn-sub">GNS3 + Cisco PT</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- INTERNSHIP -->
+<section id="internship" class="section section-alt">
+  <div class="container">
+    <div class="section-tag">// 04 — experiencia</div>
+    <h2 class="section-title">Práctica Profesional</h2>
+
+    <div class="internship-layout">
+      <div class="int-info">
+        <div class="int-header">
+          <div class="int-icon">🏛</div>
+          <div>
+            <div class="int-institution">Facultad de Ciencias Geológicas</div>
+            <div class="int-sub">Universidad Mayor de San Andrés — UMSA</div>
+          </div>
+        </div>
+
+        <div class="int-meta-grid">
+          <div class="int-meta-item">
+            <span class="int-meta-key">Período</span>
+            <span class="int-meta-val">Marzo — Junio 2026</span>
+          </div>
+          <div class="int-meta-item">
+            <span class="int-meta-key">Área</span>
+            <span class="int-meta-val">Infraestructura IT & Red</span>
+          </div>
+          <div class="int-meta-item">
+            <span class="int-meta-key">Tutor Institucional</span>
+            <span class="int-meta-val">Ing. Jose Pedro Rivera</span>
+          </div>
+          <div class="int-meta-item">
+            <span class="int-meta-key">Tutor Académico</span>
+            <span class="int-meta-val">M.Sc. Grover Alex Rodríguez Ramírez</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="int-tasks">
+        <div class="int-task-header">Actividades realizadas</div>
+        <div class="int-task-list">
+          <div class="int-task-item">
+            <div class="it-icon">🖥</div>
+            <div class="it-content">
+              <div class="it-title">Inventario de Hardware</div>
+              <div class="it-desc">Recopilación de datos de CPU, RAM, GPU y red en laboratorios y oficinas usando scripts .bat</div>
+            </div>
+          </div>
+          <div class="int-task-item">
+            <div class="it-icon">🌐</div>
+            <div class="it-content">
+              <div class="it-title">Topología de Red</div>
+              <div class="it-desc">Mapeo del cableado físico, switches, IPs y gateways de la facultad</div>
+            </div>
+          </div>
+          <div class="int-task-item">
+            <div class="it-icon">🐧</div>
+            <div class="it-content">
+              <div class="it-title">Servidor Linux</div>
+              <div class="it-desc">Implementación y configuración de servidor Linux para la facultad</div>
+            </div>
+          </div>
+          <div class="int-task-item">
+            <div class="it-icon">📋</div>
+            <div class="it-content">
+              <div class="it-title">Informe Técnico</div>
+              <div class="it-desc">Elaboración del informe inicial de práctica con análisis de infraestructura</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contacto" class="section">
+  <div class="container">
+    <div class="section-tag">// 05 — contacto</div>
+    <h2 class="section-title">Hablemos</h2>
+
+    <div class="contact-layout">
+      <div class="contact-left">
+        <p class="contact-intro">Si tienes un proyecto de seguridad, una colaboración o simplemente quieres conectar, escríbeme.</p>
+
+        <div class="terminal-card contact-terminal">
+          <div class="tc-bar">
+            <span class="tc-dot r"></span><span class="tc-dot y"></span><span class="tc-dot g"></span>
+            <span class="tc-title">contact.sh</span>
+          </div>
+          <div class="tc-body">
+            <div class="tc-line"><span class="tc-p">$</span> <span class="tc-c">./status.sh</span></div>
+            <div class="tc-o tc-hl">✔ Disponible para proyectos</div>
+            <div class="tc-o tc-hl">✔ Abierto a colaboraciones</div>
+            <div class="tc-o tc-warn">⚡ Respondo en menos de 24h</div>
+            <div class="tc-line" style="margin-top:8px;"><span class="tc-p">$</span> <span class="tc-cursor-blink">█</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-links">
+        <a href="mailto:tu@email.com" class="clink">
+          <div class="clink-icon">✉</div>
+          <div>
+            <div class="clink-label">Email</div>
+            <div class="clink-val">tu@email.com</div>
+          </div>
+          <span class="clink-arrow">→</span>
+        </a>
+        <a href="https://github.com/tuusuario" target="_blank" class="clink">
+          <div class="clink-icon">⌥</div>
+          <div>
+            <div class="clink-label">GitHub</div>
+            <div class="clink-val">github.com/tuusuario</div>
+          </div>
+          <span class="clink-arrow">→</span>
+        </a>
+        <a href="https://linkedin.com/in/tuusuario" target="_blank" class="clink">
+          <div class="clink-icon">◈</div>
+          <div>
+            <div class="clink-label">LinkedIn</div>
+            <div class="clink-val">linkedin.com/in/tuusuario</div>
+          </div>
+          <span class="clink-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">[A.SEC]</span>
+    <span class="footer-copy">© 2026 Alexander Mamani · La Paz, Bolivia</span>
+    <span class="footer-build">v1.0.0</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
