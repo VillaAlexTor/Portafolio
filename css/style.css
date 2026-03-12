@@ -699,10 +699,14 @@ body {
 .mail-app {
   position: fixed;
   inset: 40px 16px 52px;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   z-index: 45;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(14px) scale(0.985);
+  transition: opacity 0.28s ease, transform 0.28s ease;
 }
 
 .mail-window {
@@ -831,13 +835,16 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 42px;
-  padding: 6px 10px;
+  height: 46px;
+  padding: 6px 12px;
   display: flex;
   gap: 8px;
   align-items: center;
-  background: color-mix(in srgb, var(--bg-titlebar) 80%, #000 20%);
-  border-top: 1px solid var(--border);
+  justify-content: center;
+  background: color-mix(in srgb, var(--bg-titlebar) 62%, #000 38%);
+  border-top: 1px solid color-mix(in srgb, var(--accent2) 30%, var(--border) 70%);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 -8px 20px rgba(0,0,0,0.22);
   z-index: 50;
   opacity: 0;
   pointer-events: none;
@@ -880,33 +887,121 @@ body {
 }
 
 .task-app {
-  border: 1px solid var(--border2);
-  background: var(--bg-hover);
-  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent2) 24%, var(--border2) 76%);
+  background: color-mix(in srgb, var(--bg-hover) 45%, var(--bg-tabs) 55%);
+  color: var(--text-bright);
   font-family: var(--mono);
   font-size: 11px;
-  padding: 6px 10px;
-  min-width: 110px;
+  line-height: 1;
+  padding: 8px 14px;
+  min-width: 128px;
+  border-radius: 999px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.08), 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.14s ease, background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.task-app-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+  opacity: 0.95;
+}
+
+.task-app-icon-ide {
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+
+.task-app-icon-ide::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: -4px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.task-app-icon-mail {
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+
+.task-app-icon-mail::before,
+.task-app-icon-mail::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  width: 7px;
+  height: 1.5px;
+  background: currentColor;
+}
+
+.task-app-icon-mail::before {
+  left: 0;
+  transform: rotate(29deg);
+  transform-origin: left center;
+}
+
+.task-app-icon-mail::after {
+  right: 0;
+  transform: rotate(-29deg);
+  transform-origin: right center;
+}
+
+.task-app-label {
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 0.15px;
+}
+
+.task-app:hover {
+  transform: translateY(-1px);
+  color: var(--text-bright);
+  border-color: color-mix(in srgb, var(--accent2) 58%, var(--border2) 42%);
+  background: color-mix(in srgb, var(--bg-active) 68%, var(--bg-hover) 32%);
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.12), 0 4px 12px rgba(0,0,0,0.26);
+}
+
+.task-app:active {
+  transform: translateY(0);
 }
 
 .task-app.active {
   color: var(--text-bright);
-  border-color: var(--accent2);
-  background: var(--bg-active);
+  border-color: color-mix(in srgb, var(--accent2) 82%, var(--border2) 18%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-active) 95%, transparent 5%) 0%, color-mix(in srgb, var(--bg-active) 72%, transparent 28%) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14), 0 0 0 1px rgba(56,189,248,0.26), 0 6px 14px rgba(0,0,0,0.22);
+}
+
+.titlebar,
+.layout,
+.statusbar {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: transform 0.28s ease, opacity 0.28s ease;
 }
 
 body.mail-mode .titlebar,
 body.mail-mode .layout,
 body.mail-mode .statusbar {
   opacity: 0;
-  transform: scale(0.985) translateY(10px);
+  transform: translateY(14px) scale(0.985);
   pointer-events: none;
-  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 body.mail-mode .mail-app {
-  display: flex;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
 body.mail-mode .os-taskbar {
@@ -1044,7 +1139,9 @@ body.mail-mode .os-taskbar {
   .skills-grid { grid-template-columns: 1fr; }
   .mail-app { inset: 6px 6px 50px; }
   .mail-window { width: calc(100vw - 12px); max-height: calc(100vh - 72px); }
-  .task-app { min-width: 92px; padding: 6px 8px; }
+  .task-app { min-width: 102px; padding: 7px 10px; gap: 6px; }
+  .task-app-icon { width: 13px; height: 13px; }
+  .task-app-label { font-size: 10.5px; }
   .top-send-btn { min-width: 102px; }
   .toast-stack { right: 6px; bottom: 48px; }
 }

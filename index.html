@@ -177,8 +177,14 @@
   </div>
 
   <div class="os-taskbar" id="osTaskbar" aria-label="Barra de tareas">
-    <button type="button" class="task-app active" data-app="ide">Portfolio IDE</button>
-    <button type="button" class="task-app" data-app="mail">Correo</button>
+    <button type="button" class="task-app active" data-app="ide" aria-label="Abrir Portfolio IDE">
+      <span class="task-app-icon task-app-icon-ide" aria-hidden="true"></span>
+      <span class="task-app-label">Portfolio IDE</span>
+    </button>
+    <button type="button" class="task-app" data-app="mail" aria-label="Abrir Correo">
+      <span class="task-app-icon task-app-icon-mail" aria-hidden="true"></span>
+      <span class="task-app-label">Correo</span>
+    </button>
   </div>
 
   <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
