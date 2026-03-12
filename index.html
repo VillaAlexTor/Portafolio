@@ -146,6 +146,43 @@
     </div>
   </div>
 
+  <div class="mail-app" id="mailApp" aria-hidden="true">
+    <div class="mail-window">
+      <div class="mail-window-title">
+        <span>Mail Compose</span>
+        <div class="mail-title-actions">
+          <button type="submit" id="mailSendBtn" class="mail-send-btn top-send-btn" form="mailForm">
+            <span class="send-label">Enviar correo</span>
+            <span class="send-spinner" aria-hidden="true"></span>
+          </button>
+          <button type="button" id="mailCloseBtn" class="mail-close-btn" aria-label="Cerrar app de correo">✕</button>
+        </div>
+      </div>
+      <form id="mailForm" class="mail-form">
+        <label for="mailName">Nombre</label>
+        <input id="mailName" name="from_name" type="text" placeholder="Tu nombre" required>
+
+        <label for="mailReplyTo">Correo</label>
+        <input id="mailReplyTo" name="reply_to" type="email" placeholder="tu@email.com" required>
+
+        <label for="mailSubject">Asunto</label>
+        <input id="mailSubject" name="subject" type="text" placeholder="Quiero contactarte para..." required>
+
+        <label for="mailMessage">Mensaje</label>
+        <textarea id="mailMessage" name="message" rows="7" placeholder="Escribe tu mensaje..." required></textarea>
+        <p class="mail-tip">Tip: puedes volver al IDE con el boton X o desde la barra de tareas.</p>
+      </form>
+    </div>
+  </div>
+
+  <div class="os-taskbar" id="osTaskbar" aria-label="Barra de tareas">
+    <button type="button" class="task-app active" data-app="ide">Portfolio IDE</button>
+    <button type="button" class="task-app" data-app="mail">Correo</button>
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

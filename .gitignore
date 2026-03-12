@@ -1,0 +1,25 @@
+# Secrets and local env
+.env
+.env.*
+*.env
+*.local
+
+# Private keys / certificates
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE folders (uncomment if you don't want editor settings in repo)
+# .vscode/
+# .idea/

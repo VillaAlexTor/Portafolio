@@ -24,8 +24,22 @@ const gutter     = document.getElementById('gutter');
 const bcFile     = document.getElementById('bcFile');
 const sbLang     = document.getElementById('sbLang');
 const themeToggle = document.getElementById('themeToggle');
+const mailApp = document.getElementById('mailApp');
+const mailForm = document.getElementById('mailForm');
+const mailSendBtn = document.getElementById('mailSendBtn');
+const mailCloseBtn = document.getElementById('mailCloseBtn');
+const taskbarApps = document.querySelectorAll('.task-app');
+const toastStack = document.getElementById('toastStack');
 
 const THEME_KEY = 'portfolio-theme';
+const EMAILJS_SERVICE_ID = 'service_k7eyitg';
+const EMAILJS_TEMPLATE_ID = 'template_wwhclxg';
+const EMAILJS_PUBLIC_KEY = 'fQuoRWBUYBjQejMXe';
+const SEND_COOLDOWN_MS = 30000;
+
+let isMailSending = false;
+let cooldownUntil = 0;
+let cooldownTimer = null;
 
 function updateThemeToggle(theme) {
   if (!themeToggle) return;
@@ -124,6 +138,162 @@ function renderPage(html, file) {
   // Post-render hooks per file
   if (file === 'skills')     animateSkillBars();
   if (file === 'projects')   bindProjectToggles();
+  if (file === 'contact')    bindContactActions();
+}
+
+function setTaskbarActive(app) {
+  taskbarApps.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.app === app);
+  });
+}
+
+function switchDesktopApp(app) {
+  const isMail = app === 'mail';
+  document.body.classList.toggle('mail-mode', isMail);
+  if (mailApp) mailApp.setAttribute('aria-hidden', String(!isMail));
+  setTaskbarActive(app);
+}
+
+function openMailApp(prefill = {}) {
+  switchDesktopApp('mail');
+  if (mailForm && prefill.subject && !mailForm.subject.value) {
+    mailForm.subject.value = prefill.subject;
+  }
+  const nameInput = document.getElementById('mailName');
+  if (nameInput) nameInput.focus();
+}
+
+function closeMailApp() {
+  switchDesktopApp('ide');
+}
+
+function bindContactActions() {
+  const openButton = editorPane.querySelector('[data-open-mail-app="true"]');
+  if (!openButton) return;
+  openButton.addEventListener('click', () => {
+    openMailApp({ subject: 'Contacto desde portfolio' });
+  });
+}
+
+function initDesktopAppSwitcher() {
+  taskbarApps.forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchDesktopApp(btn.dataset.app === 'mail' ? 'mail' : 'ide');
+    });
+  });
+
+  if (mailCloseBtn) mailCloseBtn.addEventListener('click', closeMailApp);
+}
+
+function showToast(message, type = 'info', timeoutMs = 3200) {
+  if (!toastStack) return;
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  toastStack.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 250);
+  }, timeoutMs);
+}
+
+function setSendButtonState({ loading = false, disabled = false, label } = {}) {
+  if (!mailSendBtn) return;
+  const labelNode = mailSendBtn.querySelector('.send-label');
+  if (labelNode && label) labelNode.textContent = label;
+  mailSendBtn.classList.toggle('is-loading', loading);
+  mailSendBtn.disabled = disabled;
+}
+
+function updateSendCooldownLabel() {
+  if (!mailSendBtn) return;
+
+  const msLeft = cooldownUntil - Date.now();
+  if (msLeft <= 0) {
+    if (!isMailSending) setSendButtonState({ disabled: false, label: 'Enviar correo' });
+    return;
+  }
+
+  const secLeft = Math.ceil(msLeft / 1000);
+  setSendButtonState({ disabled: true, label: `Espera ${secLeft}s` });
+}
+
+function startSendCooldown() {
+  cooldownUntil = Date.now() + SEND_COOLDOWN_MS;
+  updateSendCooldownLabel();
+
+  if (cooldownTimer) clearInterval(cooldownTimer);
+  cooldownTimer = setInterval(() => {
+    const msLeft = cooldownUntil - Date.now();
+    if (msLeft <= 0) {
+      clearInterval(cooldownTimer);
+      cooldownTimer = null;
+      updateSendCooldownLabel();
+      return;
+    }
+    updateSendCooldownLabel();
+  }, 250);
+}
+
+function initMailForm() {
+  if (!mailForm) return;
+
+  if (!window.emailjs) {
+    showToast('No se pudo cargar EmailJS. Recarga la pagina.', 'err');
+    return;
+  }
+
+  window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  updateSendCooldownLabel();
+
+  mailForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (isMailSending) return;
+
+    if (Date.now() < cooldownUntil) {
+      const secLeft = Math.ceil((cooldownUntil - Date.now()) / 1000);
+      updateSendCooldownLabel();
+      showToast(`Espera ${secLeft}s antes de volver a enviar.`, 'info', 2600);
+      return;
+    }
+
+    const fromName = mailForm.from_name.value.trim();
+    const replyTo = mailForm.reply_to.value.trim();
+    const subject = mailForm.subject.value.trim();
+    const message = mailForm.message.value.trim();
+
+    if (!fromName || !replyTo || !subject || !message) {
+      showToast('Completa todos los campos antes de enviar.', 'err');
+      return;
+    }
+
+    isMailSending = true;
+    setSendButtonState({ loading: true, disabled: true, label: 'Enviando...' });
+    showToast('Enviando correo...', 'info', 1600);
+
+    try {
+      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        from_name: fromName,
+        reply_to: replyTo,
+        subject,
+        message,
+        to_name: 'Alexander Villarroel',
+      });
+
+      showToast('Correo enviado correctamente.', 'ok');
+      mailForm.reset();
+      startSendCooldown();
+    } catch (err) {
+      showToast('No se pudo enviar. Revisa tu plantilla de EmailJS.', 'err', 4200);
+      console.error('EmailJS send failed:', err);
+    } finally {
+      isMailSending = false;
+      setSendButtonState({ loading: false });
+      updateSendCooldownLabel();
+    }
+  });
 }
 
 /* ═══════════════════════════════════════════════════
@@ -284,6 +454,8 @@ document.addEventListener('keydown', e => {
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+  initDesktopAppSwitcher();
+  initMailForm();
   openFile('about');
   runTerminal();
 });
