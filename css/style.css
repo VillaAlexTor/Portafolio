@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   style.css — Alexander Mamani Portfolio IDE
+   style.css — Alexander Villarroel Torrico Portfolio IDE
 ═══════════════════════════════════════════════════ */
 
 /* ── Variables ─────────────────────────────────── */
@@ -44,6 +44,65 @@
   --sidebar-w:    220px;
   --statusbar-h:  22px;
   --terminal-h:   160px;
+  --scroll-thumb: #2a3a55;
+  --scroll-thumb-hover: #3a4a65;
+  --chrome-line: rgba(0,0,0,0.35);
+  --panel-line: rgba(255,255,255,0.03);
+  --title-1: #e5c07b;
+  --title-2: #61afef;
+  --title-3: #98c379;
+  --surface-card: rgba(255,255,255,0.015);
+  --surface-soft: rgba(255,255,255,0.02);
+  --statusbar-bg: #006b5a;
+  --statusbar-fg: rgba(255,255,255,0.85);
+  --statusbar-hover: rgba(0,0,0,0.15);
+  --tab-close-hover: rgba(255,255,255,0.1);
+  --avatar-fg: #000;
+  --breadcrumb-sep: #3a4a60;
+}
+
+body[data-theme="light"] {
+  --bg-titlebar:  #e4edf7;
+  --bg-sidebar:   #edf4fb;
+  --bg-tabs:      #e8eff7;
+  --bg-editor:    #f8fbff;
+  --bg-terminal:  #eef4fa;
+  --bg-hover:     rgba(15,23,42,0.05);
+  --bg-active:    rgba(2,132,199,0.10);
+  --border:       #c9d7e6;
+  --border2:      #d8e2ec;
+  --accent:       #0f766e;
+  --accent2:      #0284c7;
+  --accent3:      #b45309;
+  --accent4:      #7c3aed;
+  --red:          #dc2626;
+  --green:        #15803d;
+  --syn-keyword:  #0550ae;
+  --syn-string:   #b54708;
+  --syn-number:   #116329;
+  --syn-comment:  #6b7280;
+  --syn-fn:       #7c3aed;
+  --syn-type:     #0f766e;
+  --syn-prop:     #0969da;
+  --syn-punct:    #64748b;
+  --text:         #334155;
+  --text-dim:     #64748b;
+  --text-bright:  #0f172a;
+  --scroll-thumb: #bfd0e1;
+  --scroll-thumb-hover: #9fb8d1;
+  --chrome-line: rgba(15,23,42,0.10);
+  --panel-line: rgba(15,23,42,0.07);
+  --title-1: #a16207;
+  --title-2: #0369a1;
+  --title-3: #15803d;
+  --surface-card: rgba(15,23,42,0.03);
+  --surface-soft: rgba(15,23,42,0.04);
+  --statusbar-bg: #d8ebfb;
+  --statusbar-fg: #16324f;
+  --statusbar-hover: rgba(255,255,255,0.45);
+  --tab-close-hover: rgba(15,23,42,0.08);
+  --avatar-fg: #fff;
+  --breadcrumb-sep: #94a3b8;
 }
 
 /* ── Reset ──────────────────────────────────────── */
@@ -58,12 +117,13 @@ body {
   display: flex;
   flex-direction: column;
   user-select: none;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2a3a55; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #3a4a65; }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
 
 /* ── Title Bar ──────────────────────────────────── */
 .titlebar {
@@ -74,11 +134,28 @@ body {
   justify-content: space-between;
   padding: 0 12px;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(0,0,0,0.4);
+  border-bottom: 1px solid var(--chrome-line);
 }
 
 .titlebar-left  { display: flex; align-items: center; gap: 8px; }
-.titlebar-right { display: flex; gap: 4px; }
+.titlebar-right { display: flex; align-items: center; gap: 4px; }
+
+.theme-toggle {
+  height: 22px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-hover);
+  color: var(--text-bright);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.theme-toggle:hover {
+  background: var(--bg-active);
+  border-color: var(--accent2);
+}
 
 .titlebar-center {
   font-size: 11px;
@@ -135,7 +212,7 @@ body {
   padding-top: 4px;
   gap: 2px;
   flex-shrink: 0;
-  border-right: 1px solid rgba(0,0,0,0.3);
+  border-right: 1px solid var(--chrome-line);
 }
 
 .ab-icon {
@@ -229,7 +306,7 @@ body {
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 700; color: #000;
+  font-size: 10px; font-weight: 700; color: var(--avatar-fg);
   flex-shrink: 0;
 }
 
@@ -286,13 +363,13 @@ body {
   transition: opacity 0.15s, background 0.15s;
 }
 .tab:hover .tab-close { opacity: 1; }
-.tab-close:hover { background: rgba(255,255,255,0.1); color: var(--text-bright); }
+.tab-close:hover { background: var(--tab-close-hover); color: var(--text-bright); }
 
 /* Breadcrumb */
 .breadcrumb {
   height: 26px;
   background: var(--bg-editor);
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--panel-line);
   display: flex;
   align-items: center;
   padding: 0 16px;
@@ -301,7 +378,7 @@ body {
   color: var(--text-dim);
   flex-shrink: 0;
 }
-.bc-sep  { color: #3a4a60; }
+.bc-sep  { color: var(--breadcrumb-sep); }
 .bc-file { color: var(--text-bright); }
 
 /* Editor + Gutter */
@@ -314,7 +391,7 @@ body {
 .gutter {
   width: 46px;
   background: var(--bg-editor);
-  border-right: 1px solid rgba(255,255,255,0.03);
+  border-right: 1px solid var(--panel-line);
   padding-top: 16px;
   text-align: right;
   padding-right: 10px;
@@ -369,21 +446,21 @@ body {
 
 /* ── about.md styles ──────────────────────────── */
 .md-h1 {
-  color: #e5c07b;
+  color: var(--title-1);
   font-size: 18px;
   font-weight: 700;
   font-family: var(--sans);
   line-height: 1.4;
 }
 .md-h2 {
-  color: #61afef;
+  color: var(--title-2);
   font-size: 14px;
   font-weight: 700;
   font-family: var(--sans);
   line-height: 1.4;
 }
 .md-h3 {
-  color: #98c379;
+  color: var(--title-3);
   font-size: 13px;
   font-weight: 600;
 }
@@ -408,7 +485,7 @@ body {
 .proj-card {
   border: 1px solid var(--border);
   margin-bottom: 12px;
-  background: rgba(255,255,255,0.015);
+  background: var(--surface-card);
   transition: border-color 0.2s;
 }
 .proj-card:hover { border-color: rgba(0,212,170,0.25); }
@@ -474,7 +551,7 @@ body {
   margin: 8px 0 14px;
 }
 .skill-group {
-  background: rgba(255,255,255,0.02);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
   padding: 14px;
 }
@@ -662,12 +739,12 @@ body {
 /* ── Status Bar ───────────────────────────────── */
 .statusbar {
   height: var(--statusbar-h);
-  background: #006b5a;
+  background: var(--statusbar-bg);
   display: flex;
   align-items: center;
   padding: 0 10px;
   font-size: 11px;
-  color: rgba(255,255,255,0.85);
+  color: var(--statusbar-fg);
   flex-shrink: 0;
 }
 .sb-item {
@@ -678,7 +755,7 @@ body {
   white-space: nowrap;
   transition: background 0.15s;
 }
-.sb-item:hover { background: rgba(0,0,0,0.15); }
+.sb-item:hover { background: var(--statusbar-hover); }
 .sb-sep   { flex: 1; }
 .sb-right { display: flex; align-items: center; }
 

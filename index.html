@@ -7,27 +7,31 @@
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body data-theme="light">
 
   <!-- ══ TITLE BAR ══ -->
   <div class="titlebar">
     <div class="titlebar-left">
       <div class="tb-dots">
-        <div class="tb-dot red"></div>
-        <div class="tb-dot yellow"></div>
-        <div class="tb-dot green"></div>
+        <div class="tb-dot blue"></div>
       </div>
       <div class="tb-menu">
         <span class="tb-menu-item">File</span>
         <span class="tb-menu-item">Edit</span>
+        <span class="tb-menu-item">Selection</span>
         <span class="tb-menu-item">View</span>
+        <span class="tb-menu-item">Go</span>
+        <span class="tb-menu-item">Run</span>
         <span class="tb-menu-item">Terminal</span>
+        <span class="tb-menu-item">Help</span>
+        <span class="tb-menu-item">‹ › </span>
       </div>
     </div>
     <div class="titlebar-center">
-      alexander-portfolio — <span>Visual Studio Code</span>
+      Alexander Villarroel Torrico - Portafolio
     </div>
     <div class="titlebar-right">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar entre modo claro y oscuro"></button>
       <div class="tb-action">─</div>
       <div class="tb-action">□</div>
       <div class="tb-action">✕</div>
@@ -42,8 +46,10 @@
       <div class="ab-icon active" title="Explorer">📁</div>
       <div class="ab-icon" title="Search">🔍</div>
       <div class="ab-icon" title="Source Control">⑂</div>
+      <div class="ab-icon" title="Run and Debug">▶</div>
       <div class="ab-icon" title="Extensions">⊞</div>
       <div class="ab-spacer"></div>
+      <div class="ab-icon" title="User Profile">👤</div>
       <div class="ab-icon" title="Settings">⚙</div>
     </div>
 
@@ -83,7 +89,7 @@
       <div class="sidebar-bottom">
         <div class="sb-user">
           <div class="sb-avatar">A</div>
-          <span>alexander_mamani</span>
+          <span>alexander_villarroel</span>
         </div>
       </div>
     </div>

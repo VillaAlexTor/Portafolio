@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   main.js — Alexander Mamani Portfolio IDE
+   main.js — Alexander Villarroel Torrico Portfolio IDE
    Handles: file switching, tabs, gutter, terminal
 ═══════════════════════════════════════════════════ */
 
@@ -23,6 +23,32 @@ const editorPane = document.getElementById('editorPane');
 const gutter     = document.getElementById('gutter');
 const bcFile     = document.getElementById('bcFile');
 const sbLang     = document.getElementById('sbLang');
+const themeToggle = document.getElementById('themeToggle');
+
+const THEME_KEY = 'portfolio-theme';
+
+function updateThemeToggle(theme) {
+  if (!themeToggle) return;
+  themeToggle.textContent = theme === 'light' ? 'Modo oscuro' : 'Modo claro';
+  themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+}
+
+function applyTheme(theme) {
+  document.body.dataset.theme = theme;
+  localStorage.setItem(THEME_KEY, theme);
+  updateThemeToggle(theme);
+}
+
+function initTheme() {
+  const storedTheme = localStorage.getItem(THEME_KEY);
+  const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  applyTheme(storedTheme || preferredTheme);
+}
+
+function toggleTheme() {
+  const nextTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(nextTheme);
+}
 
 /* ═══════════════════════════════════════════════════
    OPEN FILE
@@ -176,7 +202,7 @@ function bindProjectToggles() {
 ═══════════════════════════════════════════════════ */
 const TERM_SCRIPT = [
   { type: 'cmd', cmd: 'whoami' },
-  { type: 'out', text: 'alexander_mamani  —  informatica UMSA', cls: 'ok' },
+  { type: 'out', text: 'alexander_villarroel  —  informatica UMSA', cls: 'ok' },
   { type: 'gap' },
   { type: 'cmd', cmd: 'cat .profile' },
   { type: 'out', text: 'focus=network_security, web_pentesting, forensics', cls: 'hl' },
@@ -256,6 +282,8 @@ document.addEventListener('keydown', e => {
    INIT
 ═══════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
   openFile('about');
   runTerminal();
 });
