@@ -160,16 +160,17 @@
       </div>
       <form id="mailForm" class="mail-form">
         <label for="mailName">Nombre</label>
-        <input id="mailName" name="from_name" type="text" placeholder="Tu nombre" required>
+        <input id="mailName" name="name" type="text" placeholder="Tu nombre" required>
 
         <label for="mailReplyTo">Correo</label>
-        <input id="mailReplyTo" name="reply_to" type="email" placeholder="tu@email.com" required>
+        <input id="mailReplyTo" name="email" type="email" placeholder="tu@email.com" required>
 
         <label for="mailSubject">Asunto</label>
-        <input id="mailSubject" name="subject" type="text" placeholder="Quiero contactarte para..." required>
+        <input id="mailSubject" name="title" type="text" placeholder="Quiero contactarte para..." required>
 
         <label for="mailMessage">Mensaje</label>
         <textarea id="mailMessage" name="message" rows="7" placeholder="Escribe tu mensaje..." required></textarea>
+        <input id="mailTime" name="time" type="hidden" value="">
         <p class="mail-tip">Tip: puedes volver al IDE con el boton X o desde la barra de tareas.</p>
       </form>
     </div>

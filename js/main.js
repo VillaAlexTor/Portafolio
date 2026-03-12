@@ -33,7 +33,7 @@ const toastStack = document.getElementById('toastStack');
 
 const THEME_KEY = 'portfolio-theme';
 const EMAILJS_SERVICE_ID = 'service_k7eyitg';
-const EMAILJS_TEMPLATE_ID = 'template_wwhclxg';
+const EMAILJS_TEMPLATE_ID = 'template_mhq0col';
 const EMAILJS_PUBLIC_KEY = 'fQuoRWBUYBjQejMXe';
 const SEND_COOLDOWN_MS = 30000;
 
@@ -156,8 +156,9 @@ function switchDesktopApp(app) {
 
 function openMailApp(prefill = {}) {
   switchDesktopApp('mail');
-  if (mailForm && prefill.subject && !mailForm.subject.value) {
-    mailForm.subject.value = prefill.subject;
+  const subjectInput = document.getElementById('mailSubject');
+  if (subjectInput && prefill.subject && !subjectInput.value) {
+    subjectInput.value = prefill.subject;
   }
   const nameInput = document.getElementById('mailName');
   if (nameInput) nameInput.focus();
@@ -259,10 +260,13 @@ function initMailForm() {
       return;
     }
 
-    const fromName = mailForm.from_name.value.trim();
-    const replyTo = mailForm.reply_to.value.trim();
-    const subject = mailForm.subject.value.trim();
-    const message = mailForm.message.value.trim();
+    const fromName = document.getElementById('mailName')?.value.trim() || '';
+    const replyTo = document.getElementById('mailReplyTo')?.value.trim() || '';
+    const subject = document.getElementById('mailSubject')?.value.trim() || '';
+    const message = document.getElementById('mailMessage')?.value.trim() || '';
+    const timeStamp = new Date().toLocaleString('es-BO', { hour12: false });
+    const timeInput = document.getElementById('mailTime');
+    if (timeInput) timeInput.value = timeStamp;
 
     if (!fromName || !replyTo || !subject || !message) {
       showToast('Completa todos los campos antes de enviar.', 'err');
@@ -274,19 +278,55 @@ function initMailForm() {
     showToast('Enviando correo...', 'info', 1600);
 
     try {
-      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      const payload = {
+        // Variables expected by your current template
+        name: fromName,
+        email: replyTo,
+        title: subject,
+        message,
+        time: timeStamp,
+
+        // Aliases kept for template flexibility
         from_name: fromName,
         reply_to: replyTo,
+        from_email: replyTo,
         subject,
-        message,
+        content: message,
         to_name: 'Alexander Villarroel',
-      });
+      };
+
+      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, payload);
 
       showToast('Correo enviado correctamente.', 'ok');
       mailForm.reset();
       startSendCooldown();
     } catch (err) {
-      showToast('No se pudo enviar. Revisa tu plantilla de EmailJS.', 'err', 4200);
+      const rawError = (err && (err.text || err.message || err.status)) ? String(err.text || err.message || err.status) : '';
+      const errorText = rawError.toLowerCase();
+
+      if (errorText.includes('origin') || errorText.includes('domain')) {
+        showToast('Error EmailJS: dominio no autorizado. Agrega tu URL en EmailJS > Allowed Origins.', 'err', 5200);
+      } else if (errorText.includes('template') || errorText.includes('variable')) {
+        try {
+          await window.emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, mailForm);
+          showToast('Correo enviado correctamente (fallback del formulario).', 'ok', 4200);
+          mailForm.reset();
+          if (timeInput) timeInput.value = '';
+          startSendCooldown();
+          return;
+        } catch (fallbackErr) {
+          const fallbackRaw = (fallbackErr && (fallbackErr.text || fallbackErr.message || fallbackErr.status)) ? String(fallbackErr.text || fallbackErr.message || fallbackErr.status) : '';
+          const detail = fallbackRaw || rawError || 'Sin detalle';
+          showToast(`Error plantilla EmailJS: ${detail}`, 'err', 6200);
+        }
+      } else if (errorText.includes('service')) {
+        showToast('Error EmailJS: Service ID invalido o servicio desconectado.', 'err', 5200);
+      } else if (rawError) {
+        showToast(`Error EmailJS: ${rawError}`, 'err', 5200);
+      } else {
+        showToast('No se pudo enviar. Revisa tu plantilla y dominio en EmailJS.', 'err', 5200);
+      }
+
       console.error('EmailJS send failed:', err);
     } finally {
       isMailSending = false;
