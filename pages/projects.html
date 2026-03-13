@@ -11,19 +11,52 @@
     <div class="proj-card-header">
       <div>
         <div class="proj-name">📚 Biblioteca Jurídica</div>
-        <div class="proj-type">WEB APP · SEGURIDAD</div>
+        <div class="proj-type">WEB APP</div>
       </div>
       <span class="proj-toggle">▶</span>
     </div>
     <div class="proj-body">
-      <span class="proj-sec-badge">SEC AUDIT</span>
       <p class="proj-desc">Aplicación web de consulta de documentos legales con Supabase como backend. Implementé análisis de vulnerabilidades, hardening de autenticación OAuth y políticas RLS de storage.</p>
       <div class="proj-tags">
         <span class="proj-tag blue">Supabase</span>
         <span class="proj-tag blue">OAuth 2.0</span>
         <span class="proj-tag green">Auth Hardening</span>
         <span class="proj-tag green">RLS Policies</span>
+        <span class="proj-tag green">Tablas de auditoria</span>
       </div>
+
+      <div class="proj-details">
+        <div class="proj-detail-hr"></div>
+        <div class="proj-detail-h2">Stack <span class="dim">—</span> Tecnologías</div>
+        <ul class="proj-detail-list">
+          <li><span class="pr">Frontend:</span> <span class="dim">HTML5, CSS3 Vanilla, JavaScript ES6+ (Mobile-First).</span></li>
+          <li><span class="pr">Backend (MBaaS):</span> <span class="dim">Supabase — PostgreSQL + PostgREST, GoTrue (JWT / OAuth 2.0), Supabase Storage.</span></li>
+          <li><span class="pr">Workflow:</span> <span class="dim">VS Code, Git/GitHub, Supabase CLI.</span></li>
+        </ul>
+
+        <div class="proj-detail-hr"></div>
+        <div class="proj-detail-h2">Seguridad</div>
+
+        <ul class="proj-detail-list">
+          <li>
+            <span class="pr">Auth Hardening:</span>
+            <span class="dim">OAuth 2.0 con gestión de sesiones (race-condition safe) y CAPTCHA matemático anti-fuerza bruta.</span>
+          </li>
+          <li>
+            <span class="pr">RLS Policies:</span>
+            <span class="dim">PostgreSQL Row Level Security en tablas y Storage — cada usuario accede solo a sus datos; rutas admin blindadas con verificación de roles.</span>
+          </li>
+          <li>
+            <span class="pr">Auditoría Inmutable:</span>
+            <span class="dim">Triggers de BD que registran Login/Logout y acceso a documentos; lectura exclusiva para administradores.</span>
+          </li>
+          <li>
+            <span class="pr">Frontend Shield:</span>
+            <span class="dim">CSP nivel 2, Referrer-Policy y sanitización HTML automática para bloquear XSS e inyecciones externas.</span>
+          </li>
+        </ul>
+      </div>
+
       <a href="#" class="proj-link">→ Ver proyecto</a>
     </div>
   </div>

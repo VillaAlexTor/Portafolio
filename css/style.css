@@ -543,6 +543,81 @@ body {
 .proj-link { font-size: 11px; color: var(--accent); text-decoration: none; }
 .proj-link:hover { text-decoration: underline; }
 
+/* ── project expanded detail ─────────────────── */
+.proj-details { margin-top: 10px; }
+.proj-detail-hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+}
+.proj-detail-h2 {
+  font-size: 13px;
+  color: var(--title-2);
+  font-weight: 700;
+  font-family: var(--sans);
+  margin: 10px 0 7px;
+}
+.proj-detail-h3 {
+  font-size: 11px;
+  color: var(--title-3);
+  font-weight: 600;
+  margin: 10px 0 5px;
+}
+.proj-detail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.proj-detail-list > li {
+  padding-left: 13px;
+  position: relative;
+  white-space: normal;
+}
+.proj-detail-list > li::before {
+  content: '▪';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-size: 9px;
+  top: 3px;
+}
+.proj-detail-sublist {
+  list-style: none;
+  padding: 3px 0 2px 12px;
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.proj-detail-sublist > li {
+  padding-left: 10px;
+  position: relative;
+  white-space: normal;
+}
+.proj-detail-sublist > li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--text-dim);
+}
+.proj-detail-code {
+  background: var(--bg-terminal);
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--syn-string);
+}
+
 /* ── skills.sh styles ─────────────────────────── */
 .skills-grid {
   display: grid;
