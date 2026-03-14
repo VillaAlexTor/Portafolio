@@ -837,6 +837,14 @@ body {
   color: var(--text-dim);
 }
 
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .mail-form input,
 .mail-form textarea {
   border: 1px solid var(--border);

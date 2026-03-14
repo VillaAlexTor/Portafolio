@@ -36,10 +36,18 @@ const EMAILJS_SERVICE_ID = 'service_k7eyitg';
 const EMAILJS_TEMPLATE_ID = 'template_mhq0col';
 const EMAILJS_PUBLIC_KEY = 'fQuoRWBUYBjQejMXe';
 const SEND_COOLDOWN_MS = 30000;
+const MIN_FORM_FILL_MS = 5000;
+const MAX_LINKS_IN_MESSAGE = 3;
 
 let isMailSending = false;
 let cooldownUntil = 0;
 let cooldownTimer = null;
+let mailFormOpenedAt = Date.now();
+
+function countLinks(text) {
+  const matches = text.match(/(https?:\/\/|www\.)/gi);
+  return matches ? matches.length : 0;
+}
 
 function updateThemeToggle(theme) {
   if (!themeToggle) return;
@@ -156,6 +164,7 @@ function switchDesktopApp(app) {
 
 function openMailApp(prefill = {}) {
   switchDesktopApp('mail');
+  mailFormOpenedAt = Date.now();
   const subjectInput = document.getElementById('mailSubject');
   if (subjectInput && prefill.subject && !subjectInput.value) {
     subjectInput.value = prefill.subject;
@@ -261,6 +270,7 @@ function initMailForm() {
     }
 
     const fromName = document.getElementById('mailName')?.value.trim() || '';
+    const honeypot = document.getElementById('mailWebsite')?.value.trim() || '';
     const replyTo = document.getElementById('mailReplyTo')?.value.trim() || '';
     const subject = document.getElementById('mailSubject')?.value.trim() || '';
     const message = document.getElementById('mailMessage')?.value.trim() || '';
@@ -270,6 +280,21 @@ function initMailForm() {
 
     if (!fromName || !replyTo || !subject || !message) {
       showToast('Completa todos los campos antes de enviar.', 'err');
+      return;
+    }
+
+    if (honeypot) {
+      showToast('No se pudo procesar el envio. Intenta nuevamente.', 'err');
+      return;
+    }
+
+    if ((Date.now() - mailFormOpenedAt) < MIN_FORM_FILL_MS) {
+      showToast('Espera unos segundos antes de enviar.', 'err');
+      return;
+    }
+
+    if (countLinks(message) > MAX_LINKS_IN_MESSAGE) {
+      showToast('Mensaje bloqueado por posible spam (demasiados enlaces).', 'err', 4200);
       return;
     }
 
@@ -299,6 +324,7 @@ function initMailForm() {
 
       showToast('Correo enviado correctamente.', 'ok');
       mailForm.reset();
+      mailFormOpenedAt = Date.now();
       startSendCooldown();
     } catch (err) {
       const rawError = (err && (err.text || err.message || err.status)) ? String(err.text || err.message || err.status) : '';
@@ -311,6 +337,7 @@ function initMailForm() {
           await window.emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, mailForm);
           showToast('Correo enviado correctamente (fallback del formulario).', 'ok', 4200);
           mailForm.reset();
+          mailFormOpenedAt = Date.now();
           if (timeInput) timeInput.value = '';
           startSendCooldown();
           return;
