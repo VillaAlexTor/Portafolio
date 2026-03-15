@@ -38,6 +38,8 @@ const EMAILJS_PUBLIC_KEY = 'fQuoRWBUYBjQejMXe';
 const SEND_COOLDOWN_MS = 30000;
 const MIN_FORM_FILL_MS = 5000;
 const MAX_LINKS_IN_MESSAGE = 3;
+const ABOUT_AI_API_ENDPOINT = '/api/about-ai';
+const ABOUT_AI_TIMEOUT_MS = 12000;
 
 let isMailSending = false;
 let cooldownUntil = 0;
@@ -204,21 +206,89 @@ function getAboutAiAnswer(question) {
   return 'Buena pregunta. Puedo responder sobre estudios, experiencia, proyectos, habilidades, idiomas, objetivo profesional y formas de contacto.';
 }
 
+async function fetchAboutAiFromApi(question) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), ABOUT_AI_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(ABOUT_AI_API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ question }),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`API status ${response.status}`);
+    }
+
+    const payload = await response.json();
+    if (!payload || typeof payload.answer !== 'string' || !payload.answer.trim()) {
+      throw new Error('Invalid API payload');
+    }
+
+    return payload.answer.trim();
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function getAboutAiAnswerSmart(question) {
+  try {
+    return await fetchAboutAiFromApi(question);
+  } catch (error) {
+    console.warn('About AI API unavailable, using local fallback:', error);
+    return getAboutAiAnswer(question);
+  }
+}
+
+function appendAboutAiMessage(chat, text, role = 'bot') {
+  const msg = document.createElement('div');
+  msg.className = `about-ai-msg about-ai-msg-${role}`;
+  msg.textContent = text;
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+  return msg;
+}
+
 function bindAboutAiAssistant() {
   const form = editorPane.querySelector('#aboutAiForm');
   const input = editorPane.querySelector('#aboutAiInput');
-  const answerBox = editorPane.querySelector('#aboutAiAnswer');
-  if (!form || !input || !answerBox) return;
+  const submitBtn = editorPane.querySelector('.about-ai-btn');
+  const chat = editorPane.querySelector('#aboutAiChat');
+  if (!form || !input || !submitBtn || !chat) return;
+  const defaultButtonLabel = submitBtn.textContent;
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const question = input.value.trim();
     if (!question) {
-      answerBox.textContent = 'Escribe una pregunta para poder ayudarte.';
+      appendAboutAiMessage(chat, 'Escribe una pregunta para poder ayudarte.', 'bot');
       return;
     }
 
-    answerBox.textContent = getAboutAiAnswer(question);
+    appendAboutAiMessage(chat, question, 'user');
+    input.value = '';
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Pensando...';
+    const thinkingMsg = appendAboutAiMessage(chat, 'Analizando tu pregunta...', 'thinking');
+
+    try {
+      const answer = await getAboutAiAnswerSmart(question);
+      thinkingMsg.remove();
+      appendAboutAiMessage(chat, answer, 'bot');
+    } catch (error) {
+      thinkingMsg.remove();
+      appendAboutAiMessage(chat, 'No pude responder ahora mismo. Intenta nuevamente en unos segundos.', 'bot');
+      console.error('About AI failed:', error);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = defaultButtonLabel;
+      input.focus();
+    }
   });
 }
 

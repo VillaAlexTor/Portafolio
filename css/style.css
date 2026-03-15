@@ -485,7 +485,8 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
+  min-height: max(520px, calc(100vh - 292px));
 }
 
 .about-layout .code-block {
@@ -505,6 +506,9 @@ body {
   animation: fadeIn 0.28s ease;
   position: sticky;
   top: 8px;
+  min-height: calc(100% - 8px);
+  display: flex;
+  flex-direction: column;
 }
 
 .about-ai-lab-head {
@@ -540,7 +544,7 @@ body {
   background: color-mix(in srgb, var(--bg-terminal) 92%, transparent 8%);
   border-radius: 6px;
   padding: 10px 12px;
-  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .about-ai-line {
@@ -574,7 +578,7 @@ body {
 }
 
 .about-ai-form {
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .about-ai-label {
@@ -622,15 +626,54 @@ body {
   background: color-mix(in srgb, var(--bg-active) 92%, transparent 8%);
 }
 
-.about-ai-answer {
-  margin-top: 10px;
+.about-ai-chat {
+  margin-top: 12px;
+  flex-grow: 1;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-terminal) 88%, transparent 12%);
+  border-radius: 7px;
+  padding: 10px;
+  min-height: 180px;
+  max-height: 44vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.about-ai-msg {
+  max-width: 88%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-bright);
+  white-space: pre-wrap;
+  word-break: break-word;
+  animation: fadeIn 0.18s ease;
+}
+
+.about-ai-msg-user {
+  align-self: flex-end;
+  background: color-mix(in srgb, var(--accent2) 24%, var(--bg-tabs) 76%);
+  border: 1px solid color-mix(in srgb, var(--accent2) 52%, var(--border) 48%);
+  border-bottom-right-radius: 4px;
+}
+
+.about-ai-msg-bot {
+  align-self: flex-start;
+  background: color-mix(in srgb, var(--bg-tabs) 82%, transparent 18%);
   border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
-  background: color-mix(in srgb, var(--bg-tabs) 80%, transparent 20%);
-  color: var(--text-bright);
-  padding: 9px 11px;
-  font-size: 11px;
-  line-height: 1.7;
+  border-bottom-left-radius: 4px;
+}
+
+.about-ai-msg-thinking {
+  align-self: flex-start;
+  font-style: italic;
+  color: var(--text-dim);
+  background: color-mix(in srgb, var(--bg-hover) 60%, var(--bg-tabs) 40%);
+  border: 1px dashed color-mix(in srgb, var(--accent2) 36%, var(--border) 64%);
 }
 
 /* ── projects.json styles ─────────────────────── */
@@ -1372,10 +1415,11 @@ body.mail-mode .os-taskbar {
   .sidebar, .activity-bar { display: none; }
   .tb-menu { display: none; }
   .skills-grid { grid-template-columns: 1fr; }
-  .about-layout { grid-template-columns: 1fr; gap: 12px; }
-  .about-ai-lab { position: static; }
+  .about-layout { grid-template-columns: 1fr; gap: 12px; min-height: auto; align-items: start; }
+  .about-ai-lab { position: static; min-height: auto; }
   .about-ai-row { grid-template-columns: 1fr; }
   .about-ai-btn { width: 100%; }
+  .about-ai-chat { max-height: 320px; min-height: 200px; }
   .mail-app { inset: 6px 6px 50px; }
   .mail-window { width: calc(100vw - 12px); max-height: calc(100vh - 72px); }
   .task-app { min-width: 102px; padding: 7px 10px; gap: 6px; }
