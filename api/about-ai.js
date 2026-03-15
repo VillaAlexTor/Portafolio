@@ -69,7 +69,7 @@ module.exports = async function handler(req, res) {
     'Eres el asistente personal de Alexander Villarroel Torrico.',
     'Responde SOLO sobre su perfil profesional, estudios, skills, experiencia y proyectos.',
     'No inventes datos. Si no tienes un dato, dilo de forma breve.',
-    'Responde en espanol claro, profesional y conciso (maximo 4 lineas).'
+    'Responde en espanol claro, profesional y conciso (maximo 8 lineas).'
   ].join(' ');
 
   const profileContext = [

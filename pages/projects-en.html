@@ -1,0 +1,136 @@
+<div class="code-block"><span class="dim">// projects.json</span>
+  <span></span>
+  <span class="pu">{</span>
+  <span> </span><span class="pr">"author"</span><span class="pu">:</span> <span class="str">"Alexander Villarroel
+    Torrico"</span><span class="pu">,</span>
+  <span> </span><span class="pr">"projects"</span><span class="pu">: [</span>
+</div>
+
+<div style="padding-left:16px; margin: 4px 0;">
+
+  <div class="proj-card">
+    <div class="proj-card-header">
+      <div>
+        <div class="proj-name">Legal Library — Theory of Law Club</div>
+        <div class="proj-type">WEB APP</div>
+      </div>
+      <span class="proj-toggle">▶</span>
+    </div>
+    <div class="proj-body">
+      <p class="proj-desc">Web application to manage legal documents. <b>Security by Design</b> approach
+        with immutable audit logs, granular RLS and proactive frontend shielding.</p>
+      <div class="proj-tags">
+        <span class="proj-tag blue">Supabase</span>
+        <span class="proj-tag blue">Security by Design</span>
+        <span class="proj-tag green">RLS Policies</span>
+        <span class="proj-tag green">PWA</span>
+        <span class="proj-tag yellow">Audit Logs</span>
+      </div>
+
+      <div class="proj-details">
+        <div class="proj-detail-hr"></div>
+        <div class="proj-detail-h2">Security Architecture</div>
+        <ul class="proj-detail-list">
+          <li><span class="pr">Authentication Hardening:</span> <span class="dim">OAuth 2.0, password strength validation and custom anti-bot CAPTCHA.</span></li>
+          <li><span class="pr">Data Isolation (RLS):</span> <span class="dim">PostgreSQL RLS to ensure each user only accesses their own resources in DB and Storage.</span></li>
+          <li><span class="pr">Audit System (Sec Audit):</span> <span class="dim">Immutable logging of critical activities via protected database triggers.</span></li>
+          <li><span class="pr">Frontend Shield:</span> <span class="dim">Strict CSP level 2, Referrer-Policy and centralized Anti-XSS data sanitization.</span></li>
+        </ul>
+
+        <div class="proj-detail-hr"></div>
+        <div class="proj-detail-h2">Features &amp; Stack</div>
+        <ul class="proj-detail-list">
+          <li><span class="pr">Core UI:</span> <span class="dim">HTML5, Vanilla CSS3, Modern JS (ES6+), intelligent dark mode.</span></li>
+          <li><span class="pr">Premium Experience:</span> <span class="dim">Advanced search, favorites, reactive icons and global recommendation counter.</span></li>
+          <li><span class="pr">PWA &amp; Sharing:</span> <span class="dim">Installable (Service Worker) and integrated Web Share API for seamless communication.</span></li>
+          <li><span class="pr">Infrastructure:</span> <span class="dim">Supabase Storage, Auth, PostgreSQL.</span></li>
+        </ul>
+      </div>
+
+      <a href="https://biblioteca-j-git-77c568-alexander-villarroels-projects-d8cb196d.vercel.app/" class="proj-link"
+        target="_blank" rel="noopener noreferrer">→ View project</a>
+    </div>
+  </div>
+
+  <div class="proj-card">
+    <div class="proj-card-header">
+      <div>
+        <div class="proj-name">🌐 Web Project 2</div>
+        <div class="proj-type">WEB APP</div>
+      </div>
+      <span class="proj-toggle">▶</span>
+    </div>
+    <div class="proj-body">
+      <span class="proj-sec-badge">SEC AUDIT</span>
+      <p class="proj-desc">Update this description with your second real project. Include the technologies, applied security analysis and vulnerabilities found.</p>
+      <div class="proj-tags">
+        <span class="proj-tag blue">HTML/CSS/JS</span>
+        <span class="proj-tag green">OWASP Review</span>
+      </div>
+      <a href="#" class="proj-link">→ View project</a>
+    </div>
+  </div>
+
+  <div class="proj-card">
+    <div class="proj-card-header">
+      <div>
+        <div class="proj-name">🔑 Password Generator</div>
+        <div class="proj-type">TOOL</div>
+      </div>
+      <span class="proj-toggle">▶</span>
+    </div>
+    <div class="proj-body">
+      <p class="proj-desc">Tool to generate configurable secure passwords. Calculates entropy and strength level in real time based on length and complexity using the Web Crypto API.</p>
+      <div class="proj-tags">
+        <span class="proj-tag blue">JavaScript</span>
+        <span class="proj-tag green">Crypto API</span>
+        <span class="proj-tag yellow">Entropy Calc</span>
+      </div>
+
+      <div class="proj-details">
+        <div class="proj-detail-hr"></div>
+        <div class="proj-detail-h2">Stack <span class="dim">—</span> Technologies</div>
+        <ul class="proj-detail-list">
+          <li><span class="pr">Frontend Web:</span> <span class="dim">Semantic HTML5, Vanilla CSS3 (Dark/Minimalist style), ES6+ JavaScript (Mobile-First).</span></li>
+          <li><span class="pr">Desktop (GUI):</span> <span class="dim">Python 3 with standard libraries <code class="proj-detail-code">tkinter</code> and <code class="proj-detail-code">tkinter.ttk</code>.</span></li>
+          <li><span class="pr">Workflow &amp; Deploy:</span> <span class="dim">VS Code, Git/GitHub, GitHub Pages for static web hosting.</span></li>
+        </ul>
+
+        <div class="proj-detail-hr"></div>
+        <div class="proj-detail-h2">🛡️ Security</div>
+        <ul class="proj-detail-list">
+          <li><span class="pr">Web Crypto API:</span> <span class="dim">Exclusive use of <code class="proj-detail-code">window.crypto.getRandomValues()</code> to ensure maximum entropy with a robust CSPRNG resistant to algorithmic prediction.</span></li>
+          <li><span class="pr">Strong Cryptography (Desktop):</span> <span class="dim">Implementation of Python's native <code class="proj-detail-code">secrets</code> module, discarding the insecure use of <code class="proj-detail-code">random</code>.</span></li>
+          <li><span class="pr">Zero-Knowledge Local:</span> <span class="dim">All generation happens 100% locally, with no server requests, cookies or database, reducing exposure to Man-in-the-Middle interception.</span></li>
+        </ul>
+      </div>
+
+      <a href="https://villaalextor.github.io/PassGen/" class="proj-link" target="_blank" rel="noopener noreferrer">→
+        View PassGen</a>
+    </div>
+  </div>
+
+  <div class="proj-card">
+    <div class="proj-card-header">
+      <div>
+        <div class="proj-name">📡 Network Inventory (.bat)</div>
+        <div class="proj-type">SCRIPT · INFRASTRUCTURE</div>
+      </div>
+      <span class="proj-toggle">▶</span>
+    </div>
+    <div class="proj-body">
+      <p class="proj-desc">Batch script to collect hardware and network data from multiple machines: CPU, RAM, GPU, IP, MAC, gateway. Filters USB/virtual adapters. Used during the professional internship.</p>
+      <div class="proj-tags">
+        <span class="proj-tag blue">Batch Script</span>
+        <span class="proj-tag blue">Windows</span>
+        <span class="proj-tag green">Network Recon</span>
+      </div>
+      <a href="#" class="proj-link">→ View on GitHub</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="code-block"><span class="pu"> ]</span>
+  <span class="pu">}</span>
+</div>

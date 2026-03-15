@@ -61,14 +61,14 @@
         <div class="tb-dot blue"></div>
       </div>
       <div class="tb-menu">
-        <span class="tb-menu-item">Archivo</span>
-        <span class="tb-menu-item">Editar</span>
-        <span class="tb-menu-item">Selecionar</span>
-        <span class="tb-menu-item">Ver</span>
-        <span class="tb-menu-item">Ir</span>
-        <span class="tb-menu-item">Iniciar</span>
-        <span class="tb-menu-item">Terminal</span>
-        <span class="tb-menu-item">Ayuda</span>
+        <span class="tb-menu-item" data-i18n="menu-file">Archivo</span>
+        <span class="tb-menu-item" data-i18n="menu-edit">Editar</span>
+        <span class="tb-menu-item" data-i18n="menu-select">Selecionar</span>
+        <span class="tb-menu-item" data-i18n="menu-view">Ver</span>
+        <span class="tb-menu-item" data-i18n="menu-go">Ir</span>
+        <span class="tb-menu-item" data-i18n="menu-run">Iniciar</span>
+        <span class="tb-menu-item" data-i18n="menu-terminal">Terminal</span>
+        <span class="tb-menu-item" data-i18n="menu-help">Ayuda</span>
         <span class="tb-menu-item">‹ › </span>
       </div>
     </div>
@@ -76,6 +76,7 @@
       Alexander Villarroel Torrico - Portafolio
     </div>
     <div class="titlebar-right">
+      <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">EN</button>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar entre modo claro y oscuro"></button>
       <div class="tb-action">─</div>
       <div class="tb-action">□</div>
@@ -100,7 +101,7 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="sidebar-header">Explorar</div>
+      <div class="sidebar-header" data-i18n="sidebar-header">Explorar</div>
 
       <div class="sidebar-folder">
         <span class="folder-icon">📂</span>
@@ -111,23 +112,23 @@
       <div class="sidebar-files">
         <div class="sidebar-file active" data-file="about" onclick="openFile('about')">
           <span class="file-icon icon-md">M</span>
-          <span>sobre_mi.md</span>
+          <span data-i18n="file-about">sobre_mi.md</span>
         </div>
         <div class="sidebar-file" data-file="projects" onclick="openFile('projects')">
           <span class="file-icon icon-json">{}</span>
-          <span>projectos.json</span>
+          <span data-i18n="file-projects">projectos.json</span>
         </div>
         <div class="sidebar-file" data-file="skills" onclick="openFile('skills')">
           <span class="file-icon icon-sh">$</span>
-          <span>habilidades.sh</span>
+          <span data-i18n="file-skills">habilidades.sh</span>
         </div>
         <div class="sidebar-file" data-file="experience" onclick="openFile('experience')">
           <span class="file-icon icon-log">!</span>
-          <span>experiencia.log</span>
+          <span data-i18n="file-experience">experiencia.log</span>
         </div>
         <div class="sidebar-file" data-file="contact" onclick="openFile('contact')">
           <span class="file-icon icon-txt">≡</span>
-          <span>contacto.txt</span>
+          <span data-i18n="file-contact">contacto.txt</span>
         </div>
       </div>
 
@@ -204,24 +205,24 @@
         </div>
       </div>
       <form id="mailForm" class="mail-form">
-        <label for="mailName">Nombre</label>
-        <input id="mailName" name="name" type="text" placeholder="Tu nombre" required>
+        <label for="mailName" data-i18n="mail-label-name">Nombre</label>
+        <input id="mailName" name="name" type="text" placeholder="Tu nombre" data-i18n-ph="mail-ph-name" required>
 
         <div class="hp-field" aria-hidden="true">
           <label for="mailWebsite">Website</label>
           <input id="mailWebsite" name="website" type="text" autocomplete="off" tabindex="-1" placeholder="No completar">
         </div>
 
-        <label for="mailReplyTo">Correo</label>
+        <label for="mailReplyTo" data-i18n="mail-label-email">Correo</label>
         <input id="mailReplyTo" name="email" type="email" placeholder="tu@email.com" required>
 
-        <label for="mailSubject">Asunto</label>
-        <input id="mailSubject" name="title" type="text" placeholder="Quiero contactarte para..." required>
+        <label for="mailSubject" data-i18n="mail-label-subject">Asunto</label>
+        <input id="mailSubject" name="title" type="text" placeholder="Quiero contactarte para..." data-i18n-ph="mail-ph-subject" required>
 
-        <label for="mailMessage">Mensaje</label>
-        <textarea id="mailMessage" name="message" rows="7" placeholder="Escribe tu mensaje..." required></textarea>
+        <label for="mailMessage" data-i18n="mail-label-message">Mensaje</label>
+        <textarea id="mailMessage" name="message" rows="7" placeholder="Escribe tu mensaje..." data-i18n-ph="mail-ph-message" required></textarea>
         <input id="mailTime" name="time" type="hidden" value="">
-        <p class="mail-tip">Tip: puedes volver al IDE con el boton X o desde la barra de tareas.</p>
+        <p class="mail-tip" data-i18n="mail-tip">Tip: puedes volver al IDE con el boton X o desde la barra de tareas.</p>
       </form>
     </div>
   </div>
@@ -233,7 +234,7 @@
     </button>
     <button type="button" class="task-app" data-app="mail" aria-label="Abrir Correo">
       <span class="task-app-icon task-app-icon-mail" aria-hidden="true"></span>
-      <span class="task-app-label">Correo</span>
+      <span class="task-app-label" data-i18n="taskbar-mail">Correo</span>
     </button>
   </div>
 

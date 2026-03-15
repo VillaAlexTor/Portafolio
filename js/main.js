@@ -5,11 +5,11 @@
 
 /* ── File registry ──────────────────────────────── */
 const FILES = {
-  about:      { label: 'about.md',       lang: 'Markdown',  icon: 'M',  iconClass: 'icon-md',   lines: 30 },
-  projects:   { label: 'projects.json',  lang: 'JSON',      icon: '{}', iconClass: 'icon-json', lines: 18 },
-  skills:     { label: 'skills.sh',      lang: 'Shell',     icon: '$',  iconClass: 'icon-sh',   lines: 38 },
-  experience: { label: 'experience.log', lang: 'Log',       icon: '!',  iconClass: 'icon-log',  lines: 44 },
-  contact:    { label: 'contact.txt',    lang: 'Plaintext', icon: '≡',  iconClass: 'icon-txt',  lines: 26 },
+  about:      { labels: { es: 'sobre_mi.md',     en: 'about_me.md'    }, lang: 'Markdown',  icon: 'M',  iconClass: 'icon-md',   lines: 30 },
+  projects:   { labels: { es: 'proyectos.json',  en: 'projects.json'  }, lang: 'JSON',      icon: '{}', iconClass: 'icon-json', lines: 18 },
+  skills:     { labels: { es: 'habilidades.sh',  en: 'skills.sh'      }, lang: 'Shell',     icon: '$',  iconClass: 'icon-sh',   lines: 38 },
+  experience: { labels: { es: 'experiencia.log', en: 'experience.log' }, lang: 'Log',       icon: '!',  iconClass: 'icon-log',  lines: 44 },
+  contact:    { labels: { es: 'contacto.txt',    en: 'contact.txt'    }, lang: 'Plaintext', icon: '≡',  iconClass: 'icon-txt',  lines: 26 },
 };
 
 /* ── State ──────────────────────────────────────── */
@@ -24,6 +24,7 @@ const gutter     = document.getElementById('gutter');
 const bcFile     = document.getElementById('bcFile');
 const sbLang     = document.getElementById('sbLang');
 const themeToggle = document.getElementById('themeToggle');
+const langToggle  = document.getElementById('langToggle');
 const mailApp = document.getElementById('mailApp');
 const mailForm = document.getElementById('mailForm');
 const mailSendBtn = document.getElementById('mailSendBtn');
@@ -40,6 +41,93 @@ const MIN_FORM_FILL_MS = 5000;
 const MAX_LINKS_IN_MESSAGE = 3;
 const ABOUT_AI_API_ENDPOINT = '/api/about-ai';
 const ABOUT_AI_TIMEOUT_MS = 12000;
+
+/* ── Language system ────────────────────────────── */
+const LANG_KEY = 'portfolio-lang';
+let currentLang = 'es';
+
+const I18N = {
+  es: {
+    loading: 'Cargando...',
+    'err-loading': f => `// Error cargando ${f}`,
+    'menu-file': 'Archivo', 'menu-edit': 'Editar', 'menu-select': 'Selecionar',
+    'menu-view': 'Ver', 'menu-go': 'Ir', 'menu-run': 'Iniciar',
+    'menu-terminal': 'Terminal', 'menu-help': 'Ayuda',
+    'sidebar-header': 'Explorar',
+    'file-about': 'sobre_mi.md', 'file-projects': 'proyectos.json',
+    'file-skills': 'habilidades.sh', 'file-experience': 'experiencia.log',
+    'file-contact': 'contacto.txt',
+    'mail-label-name': 'Nombre', 'mail-label-email': 'Correo',
+    'mail-label-subject': 'Asunto', 'mail-label-message': 'Mensaje',
+    'mail-ph-name': 'Tu nombre',
+    'mail-ph-subject': 'Quiero contactarte para...',
+    'mail-ph-message': 'Escribe tu mensaje...',
+    'mail-send': 'Enviar correo',
+    'mail-tip': 'Tip: puedes volver al IDE con el boton X o desde la barra de tareas.',
+    'taskbar-mail': 'Correo',
+    'theme-dark': 'Modo oscuro', 'theme-light': 'Modo claro',
+    'ai-empty': 'Escribe una pregunta para poder ayudarte.',
+    'ai-thinking-btn': 'Pensando...',
+    'ai-thinking-msg': 'Analizando tu pregunta...',
+    'ai-error-msg': 'No pude responder ahora mismo. Intenta nuevamente en unos segundos.',
+    'ai-fallback': 'Buena pregunta. Puedo responder sobre estudios, experiencia, proyectos, habilidades, idiomas, objetivo profesional y formas de contacto.',
+    'mail-sending': 'Enviando correo...',
+    'mail-sent': 'Correo enviado correctamente.',
+    'mail-sent-fallback': 'Correo enviado correctamente (fallback del formulario).',
+    'mail-fill-all': 'Completa todos los campos antes de enviar.',
+    'mail-wait': 'Espera unos segundos antes de enviar.',
+    'mail-spam': 'Mensaje bloqueado por posible spam (demasiados enlaces).',
+    'mail-spam-gen': 'No se pudo procesar el envio. Intenta nuevamente.',
+    'mail-cooldown': s => `Espera ${s}s`,
+    'mail-cooldown-toast': s => `Espera ${s}s antes de volver a enviar.`,
+    'mail-no-emailjs': 'No se pudo cargar EmailJS. Recarga la pagina.',
+    'mail-err-domain': 'Error EmailJS: dominio no autorizado. Agrega tu URL en EmailJS > Allowed Origins.',
+    'mail-err-template': s => `Error plantilla EmailJS: ${s}`,
+    'mail-err-service': 'Error EmailJS: Service ID invalido o servicio desconectado.',
+    'mail-err-raw': s => `Error EmailJS: ${s}`,
+    'mail-err-generic': 'No se pudo enviar. Revisa tu plantilla y dominio en EmailJS.',
+  },
+  en: {
+    loading: 'Loading...',
+    'err-loading': f => `// Error loading ${f}`,
+    'menu-file': 'File', 'menu-edit': 'Edit', 'menu-select': 'Select',
+    'menu-view': 'View', 'menu-go': 'Go', 'menu-run': 'Run',
+    'menu-terminal': 'Terminal', 'menu-help': 'Help',
+    'sidebar-header': 'Explorer',
+    'file-about': 'about_me.md', 'file-projects': 'projects.json',
+    'file-skills': 'skills.sh', 'file-experience': 'experience.log',
+    'file-contact': 'contact.txt',
+    'mail-label-name': 'Name', 'mail-label-email': 'Email',
+    'mail-label-subject': 'Subject', 'mail-label-message': 'Message',
+    'mail-ph-name': 'Your name',
+    'mail-ph-subject': "I'd like to contact you about...",
+    'mail-ph-message': 'Write your message...',
+    'mail-send': 'Send email',
+    'mail-tip': 'Tip: you can return to the IDE using the X button or from the taskbar.',
+    'taskbar-mail': 'Mail',
+    'theme-dark': 'Dark mode', 'theme-light': 'Light mode',
+    'ai-empty': 'Write a question so I can help you.',
+    'ai-thinking-btn': 'Thinking...',
+    'ai-thinking-msg': 'Analyzing your question...',
+    'ai-error-msg': "Couldn't respond right now. Please try again in a few seconds.",
+    'ai-fallback': 'Good question. I can answer about studies, experience, projects, skills, languages, professional goals and contact methods.',
+    'mail-sending': 'Sending email...',
+    'mail-sent': 'Email sent successfully.',
+    'mail-sent-fallback': 'Email sent successfully (form fallback).',
+    'mail-fill-all': 'Fill in all fields before sending.',
+    'mail-wait': 'Wait a few seconds before sending.',
+    'mail-spam': 'Message blocked for possible spam (too many links).',
+    'mail-spam-gen': 'Could not process the submission. Please try again.',
+    'mail-cooldown': s => `Wait ${s}s`,
+    'mail-cooldown-toast': s => `Wait ${s}s before sending again.`,
+    'mail-no-emailjs': 'Could not load EmailJS. Reload the page.',
+    'mail-err-domain': 'EmailJS error: domain not authorized. Add your URL in EmailJS > Allowed Origins.',
+    'mail-err-template': s => `EmailJS template error: ${s}`,
+    'mail-err-service': 'EmailJS error: invalid Service ID or disconnected service.',
+    'mail-err-raw': s => `EmailJS error: ${s}`,
+    'mail-err-generic': "Couldn't send. Check your template and domain in EmailJS.",
+  },
+};
 
 let isMailSending = false;
 let cooldownUntil = 0;
@@ -84,7 +172,7 @@ function countLinks(text) {
 
 function updateThemeToggle(theme) {
   if (!themeToggle) return;
-  themeToggle.textContent = theme === 'light' ? 'Modo oscuro' : 'Modo claro';
+  themeToggle.textContent = theme === 'light' ? I18N[currentLang]['theme-dark'] : I18N[currentLang]['theme-light'];
   themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
 }
 
@@ -103,6 +191,55 @@ function initTheme() {
 function toggleTheme() {
   const nextTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
   applyTheme(nextTheme);
+}
+
+/* ── Language toggle ────────────────────────────── */
+function updateLangToggle() {
+  if (!langToggle) return;
+  langToggle.textContent = currentLang === 'es' ? 'EN' : 'ES';
+  langToggle.setAttribute('aria-label', currentLang === 'es' ? 'Switch to English' : 'Cambiar a Español');
+}
+
+function applyTranslations() {
+  const tk = I18N[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (typeof tk[key] === 'string') el.textContent = tk[key];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.dataset.i18nPh;
+    if (typeof tk[key] === 'string') el.placeholder = tk[key];
+  });
+  document.documentElement.lang = currentLang;
+  updateThemeToggle(document.body.dataset.theme);
+  renderTabs();
+  if (activeFile && FILES[activeFile]) {
+    bcFile.textContent = FILES[activeFile].labels[currentLang];
+  }
+  if (!isMailSending && !(cooldownUntil > Date.now())) {
+    const labelNode = mailSendBtn?.querySelector('.send-label');
+    if (labelNode) labelNode.textContent = tk['mail-send'];
+  }
+}
+
+function setLang(lang) {
+  currentLang = I18N[lang] ? lang : 'es';
+  localStorage.setItem(LANG_KEY, currentLang);
+  updateLangToggle();
+  applyTranslations();
+  for (const key in cache) delete cache[key];
+  if (activeFile) loadPage(activeFile);
+}
+
+function toggleLang() {
+  setLang(currentLang === 'es' ? 'en' : 'es');
+}
+
+function initLang() {
+  const storedLang = localStorage.getItem(LANG_KEY);
+  currentLang = I18N[storedLang] ? storedLang : 'es';
+  updateLangToggle();
+  applyTranslations();
 }
 
 /* ═══════════════════════════════════════════════════
@@ -130,7 +267,7 @@ async function openFile(file) {
   });
 
   // Update breadcrumb + status bar
-  bcFile.textContent = FILES[file].label;
+  bcFile.textContent = FILES[file].labels[currentLang];
   sbLang.textContent = FILES[file].lang;
 
   // Update gutter
@@ -144,27 +281,29 @@ async function openFile(file) {
    LOAD PAGE via fetch
 ═══════════════════════════════════════════════════ */
 async function loadPage(file) {
-  // Show loading state
-  editorPane.innerHTML = '<div class="pane-loading">Cargando...</div>';
+  editorPane.innerHTML = `<div class="pane-loading">${I18N[currentLang].loading}</div>`;
+
+  const langSuffix = currentLang === 'en' ? '-en' : '';
+  const cacheKey   = `${file}${langSuffix}`;
 
   try {
-    // Use cache if available
-    if (cache[file]) {
-      renderPage(cache[file], file);
+    if (cache[cacheKey]) {
+      renderPage(cache[cacheKey], file);
       return;
     }
 
-    const res  = await fetch(`pages/${file}.html`);
+    let res = await fetch(`pages/${file}${langSuffix}.html`);
+    if (!res.ok && langSuffix) res = await fetch(`pages/${file}.html`);
     if (!res.ok) throw new Error(`${res.status}`);
     const html = await res.text();
 
-    cache[file] = html;
+    cache[cacheKey] = html;
     renderPage(html, file);
 
   } catch (err) {
     editorPane.innerHTML = `
       <div class="code-block">
-        <span class="cmt">// Error cargando pages/${file}.html</span>
+        <span class="cmt">${I18N[currentLang]['err-loading'](`pages/${file}.html`)}</span>
         <br><span class="dim">${err.message}</span>
       </div>`;
   }
@@ -195,7 +334,7 @@ function normalizeQuestion(text) {
 
 function getAboutAiAnswer(question) {
   const normalized = normalizeQuestion(question);
-  if (!normalized) return 'Escribe una pregunta para poder ayudarte.';
+  if (!normalized) return I18N[currentLang]['ai-empty'];
 
   for (const item of ABOUT_AI_RESPONSES) {
     if (item.patterns.some(pattern => normalized.includes(pattern))) {
@@ -203,7 +342,7 @@ function getAboutAiAnswer(question) {
     }
   }
 
-  return 'Buena pregunta. Puedo responder sobre estudios, experiencia, proyectos, habilidades, idiomas, objetivo profesional y formas de contacto.';
+  return I18N[currentLang]['ai-fallback'];
 }
 
 async function fetchAboutAiFromApi(question) {
@@ -265,7 +404,7 @@ function bindAboutAiAssistant() {
     event.preventDefault();
     const question = input.value.trim();
     if (!question) {
-      appendAboutAiMessage(chat, 'Escribe una pregunta para poder ayudarte.', 'bot');
+      appendAboutAiMessage(chat, I18N[currentLang]['ai-empty'], 'bot');
       return;
     }
 
@@ -273,8 +412,8 @@ function bindAboutAiAssistant() {
     input.value = '';
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Pensando...';
-    const thinkingMsg = appendAboutAiMessage(chat, 'Analizando tu pregunta...', 'thinking');
+    submitBtn.textContent = I18N[currentLang]['ai-thinking-btn'];
+    const thinkingMsg = appendAboutAiMessage(chat, I18N[currentLang]['ai-thinking-msg'], 'thinking');
 
     try {
       const answer = await getAboutAiAnswerSmart(question);
@@ -282,7 +421,7 @@ function bindAboutAiAssistant() {
       appendAboutAiMessage(chat, answer, 'bot');
     } catch (error) {
       thinkingMsg.remove();
-      appendAboutAiMessage(chat, 'No pude responder ahora mismo. Intenta nuevamente en unos segundos.', 'bot');
+      appendAboutAiMessage(chat, I18N[currentLang]['ai-error-msg'], 'bot');
       console.error('About AI failed:', error);
     } finally {
       submitBtn.disabled = false;
@@ -364,12 +503,12 @@ function updateSendCooldownLabel() {
 
   const msLeft = cooldownUntil - Date.now();
   if (msLeft <= 0) {
-    if (!isMailSending) setSendButtonState({ disabled: false, label: 'Enviar correo' });
+    if (!isMailSending) setSendButtonState({ disabled: false, label: I18N[currentLang]['mail-send'] });
     return;
   }
 
   const secLeft = Math.ceil(msLeft / 1000);
-  setSendButtonState({ disabled: true, label: `Espera ${secLeft}s` });
+  setSendButtonState({ disabled: true, label: I18N[currentLang]['mail-cooldown'](secLeft) });
 }
 
 function startSendCooldown() {
@@ -393,7 +532,7 @@ function initMailForm() {
   if (!mailForm) return;
 
   if (!window.emailjs) {
-    showToast('No se pudo cargar EmailJS. Recarga la pagina.', 'err');
+    showToast(I18N[currentLang]['mail-no-emailjs'], 'err');
     return;
   }
 
@@ -408,7 +547,7 @@ function initMailForm() {
     if (Date.now() < cooldownUntil) {
       const secLeft = Math.ceil((cooldownUntil - Date.now()) / 1000);
       updateSendCooldownLabel();
-      showToast(`Espera ${secLeft}s antes de volver a enviar.`, 'info', 2600);
+      showToast(I18N[currentLang]['mail-cooldown-toast'](secLeft), 'info', 2600);
       return;
     }
 
@@ -422,28 +561,28 @@ function initMailForm() {
     if (timeInput) timeInput.value = timeStamp;
 
     if (!fromName || !replyTo || !subject || !message) {
-      showToast('Completa todos los campos antes de enviar.', 'err');
+      showToast(I18N[currentLang]['mail-fill-all'], 'err');
       return;
     }
 
     if (honeypot) {
-      showToast('No se pudo procesar el envio. Intenta nuevamente.', 'err');
+      showToast(I18N[currentLang]['mail-spam-gen'], 'err');
       return;
     }
 
     if ((Date.now() - mailFormOpenedAt) < MIN_FORM_FILL_MS) {
-      showToast('Espera unos segundos antes de enviar.', 'err');
+      showToast(I18N[currentLang]['mail-wait'], 'err');
       return;
     }
 
     if (countLinks(message) > MAX_LINKS_IN_MESSAGE) {
-      showToast('Mensaje bloqueado por posible spam (demasiados enlaces).', 'err', 4200);
+      showToast(I18N[currentLang]['mail-spam'], 'err', 4200);
       return;
     }
 
     isMailSending = true;
     setSendButtonState({ loading: true, disabled: true, label: 'Enviando...' });
-    showToast('Enviando correo...', 'info', 1600);
+    showToast(I18N[currentLang]['mail-sending'], 'info', 1600);
 
     try {
       const payload = {
@@ -465,7 +604,7 @@ function initMailForm() {
 
       await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, payload);
 
-      showToast('Correo enviado correctamente.', 'ok');
+      showToast(I18N[currentLang]['mail-sent'], 'ok');
       mailForm.reset();
       mailFormOpenedAt = Date.now();
       startSendCooldown();
@@ -474,11 +613,11 @@ function initMailForm() {
       const errorText = rawError.toLowerCase();
 
       if (errorText.includes('origin') || errorText.includes('domain')) {
-        showToast('Error EmailJS: dominio no autorizado. Agrega tu URL en EmailJS > Allowed Origins.', 'err', 5200);
+        showToast(I18N[currentLang]['mail-err-domain'], 'err', 5200);
       } else if (errorText.includes('template') || errorText.includes('variable')) {
         try {
           await window.emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, mailForm);
-          showToast('Correo enviado correctamente (fallback del formulario).', 'ok', 4200);
+          showToast(I18N[currentLang]['mail-sent-fallback'], 'ok', 4200);
           mailForm.reset();
           mailFormOpenedAt = Date.now();
           if (timeInput) timeInput.value = '';
@@ -487,14 +626,14 @@ function initMailForm() {
         } catch (fallbackErr) {
           const fallbackRaw = (fallbackErr && (fallbackErr.text || fallbackErr.message || fallbackErr.status)) ? String(fallbackErr.text || fallbackErr.message || fallbackErr.status) : '';
           const detail = fallbackRaw || rawError || 'Sin detalle';
-          showToast(`Error plantilla EmailJS: ${detail}`, 'err', 6200);
+          showToast(I18N[currentLang]['mail-err-template'](detail), 'err', 6200);
         }
       } else if (errorText.includes('service')) {
-        showToast('Error EmailJS: Service ID invalido o servicio desconectado.', 'err', 5200);
+        showToast(I18N[currentLang]['mail-err-service'], 'err', 5200);
       } else if (rawError) {
-        showToast(`Error EmailJS: ${rawError}`, 'err', 5200);
+        showToast(I18N[currentLang]['mail-err-raw'](rawError), 'err', 5200);
       } else {
-        showToast('No se pudo enviar. Revisa tu plantilla y dominio en EmailJS.', 'err', 5200);
+        showToast(I18N[currentLang]['mail-err-generic'], 'err', 5200);
       }
 
       console.error('EmailJS send failed:', err);
@@ -515,7 +654,7 @@ function renderTabs() {
     return `
       <div class="tab${f === activeFile ? ' active' : ''}" data-file="${f}" onclick="openFile('${f}')">
         <span class="file-icon ${m.iconClass}" style="font-size:11px">${m.icon}</span>
-        <span>${m.label}</span>
+        <span>${m.labels[currentLang]}</span>
         <span class="tab-close" onclick="closeTab(event,'${f}')">✕</span>
       </div>`;
   }).join('');
@@ -663,7 +802,9 @@ document.addEventListener('keydown', e => {
 ═══════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initLang();
   if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+  if (langToggle)  langToggle.addEventListener('click', toggleLang);
   initDesktopAppSwitcher();
   initMailForm();
   openFile('about');
