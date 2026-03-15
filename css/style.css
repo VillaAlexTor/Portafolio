@@ -481,6 +481,158 @@ body {
 .badge-blue   { background: rgba(56,189,248,0.15);  color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
 .badge-yellow { background: rgba(245,158,11,0.15);  color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
 
+.about-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.about-layout .code-block {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.about-ai-lab {
+  margin-top: 0;
+  border: 1px solid color-mix(in srgb, var(--accent2) 40%, var(--border) 60%);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--bg-tabs) 82%, transparent 18%), color-mix(in srgb, var(--bg-editor) 88%, transparent 12%)),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent2) 28%, transparent 72%), transparent 46%);
+  padding: 14px;
+  border-radius: 8px;
+  white-space: normal;
+  animation: fadeIn 0.28s ease;
+  position: sticky;
+  top: 8px;
+}
+
+.about-ai-lab-head {
+  margin-bottom: 12px;
+}
+
+.about-ai-kicker {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  color: var(--accent2);
+  margin-bottom: 4px;
+}
+
+.about-ai-title {
+  font-size: 18px;
+  line-height: 1.25;
+  margin: 0;
+  color: var(--text-bright);
+  font-family: var(--sans);
+}
+
+.about-ai-subtitle {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-dim);
+  max-width: 70ch;
+}
+
+.about-ai-console {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-terminal) 92%, transparent 8%);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.about-ai-line {
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--text-bright);
+}
+
+.about-ai-line.ok {
+  color: var(--green);
+}
+
+.about-ai-prompt {
+  color: var(--accent);
+  margin-right: 5px;
+}
+
+.about-ai-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.about-ai-tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--text-bright);
+  border: 1px solid color-mix(in srgb, var(--accent2) 44%, var(--border) 56%);
+  background: color-mix(in srgb, var(--bg-hover) 54%, var(--bg-tabs) 46%);
+}
+
+.about-ai-form {
+  margin-top: 12px;
+}
+
+.about-ai-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 7px;
+}
+
+.about-ai-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.about-ai-row input {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-terminal) 94%, transparent 6%);
+  color: var(--text-bright);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 8px 10px;
+  outline: none;
+}
+
+.about-ai-row input:focus {
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent2) 42%, transparent 58%);
+}
+
+.about-ai-btn {
+  border: 1px solid color-mix(in srgb, var(--accent2) 60%, var(--border2) 40%);
+  background: color-mix(in srgb, var(--bg-active) 76%, transparent 24%);
+  color: var(--text-bright);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+}
+
+.about-ai-btn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--bg-active) 92%, transparent 8%);
+}
+
+.about-ai-answer {
+  margin-top: 10px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--bg-tabs) 80%, transparent 20%);
+  color: var(--text-bright);
+  padding: 9px 11px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
 /* ── projects.json styles ─────────────────────── */
 .proj-card {
   border: 1px solid var(--border);
@@ -1220,6 +1372,10 @@ body.mail-mode .os-taskbar {
   .sidebar, .activity-bar { display: none; }
   .tb-menu { display: none; }
   .skills-grid { grid-template-columns: 1fr; }
+  .about-layout { grid-template-columns: 1fr; gap: 12px; }
+  .about-ai-lab { position: static; }
+  .about-ai-row { grid-template-columns: 1fr; }
+  .about-ai-btn { width: 100%; }
   .mail-app { inset: 6px 6px 50px; }
   .mail-window { width: calc(100vw - 12px); max-height: calc(100vh - 72px); }
   .task-app { min-width: 102px; padding: 7px 10px; gap: 6px; }

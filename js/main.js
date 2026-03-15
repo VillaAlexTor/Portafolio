@@ -44,6 +44,37 @@ let cooldownUntil = 0;
 let cooldownTimer = null;
 let mailFormOpenedAt = Date.now();
 
+const ABOUT_AI_RESPONSES = [
+  {
+    patterns: ['estudias', 'estudio', 'universidad', 'umsa', 'informatica'],
+    answer: 'Estoy estudiando Informatica en la UMSA, con foco en ciberseguridad, redes y analisis forense digital.',
+  },
+  {
+    patterns: ['enfoque', 'ciberseguridad', 'seguridad', 'pentesting', 'web'],
+    answer: 'Mi enfoque principal es la ciberseguridad aplicada: evaluacion de vulnerabilidades web, hardening de autenticacion y seguridad de redes.',
+  },
+  {
+    patterns: ['experiencia', 'practica', 'internship', 'geologicas', 'redes'],
+    answer: 'Realice practica profesional en IT y Redes en la Facultad de Ciencias Geologicas (UMSA): inventario de hardware, mapeo de red e implementacion de servidor Linux.',
+  },
+  {
+    patterns: ['proyectos', 'proyecto', 'biblioteca juridica', 'passgen', 'inventario'],
+    answer: 'Mis proyectos destacados incluyen Biblioteca Juridica (Supabase + OAuth hardening + RLS), PassGen (Web Crypto API) y un script de inventario de red para infraestructura Windows.',
+  },
+  {
+    patterns: ['idioma', 'idiomas', 'ingles', 'espanol'],
+    answer: 'Hablo espanol nativo e ingles nivel B1.',
+  },
+  {
+    patterns: ['objetivo', 'meta', 'futuro', 'carrera'],
+    answer: 'Mi objetivo es crecer hacia roles de pentesting web o seguridad de redes, aportando en equipos que protejan infraestructura critica.',
+  },
+  {
+    patterns: ['contacto', 'contactarte', 'email', 'linkedin', 'github'],
+    answer: 'Puedes contactarme por email, LinkedIn o GitHub desde la seccion contact del portfolio.',
+  },
+];
+
 function countLinks(text) {
   const matches = text.match(/(https?:\/\/|www\.)/gi);
   return matches ? matches.length : 0;
@@ -144,9 +175,51 @@ function renderPage(html, file) {
   editorPane.classList.add('pane-fade-in');
 
   // Post-render hooks per file
+  if (file === 'about')      bindAboutAiAssistant();
   if (file === 'skills')     animateSkillBars();
   if (file === 'projects')   bindProjectToggles();
   if (file === 'contact')    bindContactActions();
+}
+
+function normalizeQuestion(text) {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getAboutAiAnswer(question) {
+  const normalized = normalizeQuestion(question);
+  if (!normalized) return 'Escribe una pregunta para poder ayudarte.';
+
+  for (const item of ABOUT_AI_RESPONSES) {
+    if (item.patterns.some(pattern => normalized.includes(pattern))) {
+      return item.answer;
+    }
+  }
+
+  return 'Buena pregunta. Puedo responder sobre estudios, experiencia, proyectos, habilidades, idiomas, objetivo profesional y formas de contacto.';
+}
+
+function bindAboutAiAssistant() {
+  const form = editorPane.querySelector('#aboutAiForm');
+  const input = editorPane.querySelector('#aboutAiInput');
+  const answerBox = editorPane.querySelector('#aboutAiAnswer');
+  if (!form || !input || !answerBox) return;
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const question = input.value.trim();
+    if (!question) {
+      answerBox.textContent = 'Escribe una pregunta para poder ayudarte.';
+      return;
+    }
+
+    answerBox.textContent = getAboutAiAnswer(question);
+  });
 }
 
 function setTaskbarActive(app) {
