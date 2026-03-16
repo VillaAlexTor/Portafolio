@@ -4,6 +4,22 @@ function sanitizeQuestion(text) {
   return String(text || '').trim().slice(0, 320);
 }
 
+function sanitizeRecentQuestions(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => sanitizeQuestion(item))
+    .filter(Boolean)
+    .slice(-3);
+}
+
+function sanitizeRecentBotAnswers(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => String(item || '').trim().slice(0, 420))
+    .filter(Boolean)
+    .slice(-2);
+}
+
 function extractAnswer(payload) {
   const candidate = payload?.candidates?.[0];
   const parts = candidate?.content?.parts;
@@ -59,17 +75,25 @@ module.exports = async function handler(req, res) {
   }
 
   const question = sanitizeQuestion(body.question);
+  const recentQuestions = sanitizeRecentQuestions(body.recentQuestions);
+  const recentBotAnswers = sanitizeRecentBotAnswers(body.recentBotAnswers);
 
   if (!question) {
     res.status(400).json({ error: 'Question is required' });
     return;
   }
 
+  const isEnglishQuestion = /\b(what|how|where|when|why|who|your|experience|project|skills|contact|hello|hi)\b/i.test(question);
+
   const systemPrompt = [
     'Eres el asistente personal de Alexander Villarroel Torrico.',
-    'Responde SOLO sobre su perfil profesional, estudios, skills, experiencia y proyectos.',
+    'Responde SOLO sobre su perfil profesional, estudios, skills, experiencia, proyectos y contacto.',
     'No inventes datos. Si no tienes un dato, dilo de forma breve.',
-    'Responde en espanol claro, profesional y conciso (maximo 8 lineas).'
+    isEnglishQuestion
+      ? 'Responde en ingles claro, profesional y conciso (maximo 6 lineas).'
+      : 'Responde en espanol claro, profesional y conciso (maximo 6 lineas).',
+    'Si la pregunta es amplia, prioriza: 1) dato concreto, 2) contexto breve, 3) cierre util.',
+    'No uses relleno ni respuestas vagas.'
   ].join(' ');
 
   const profileContext = [
@@ -84,6 +108,14 @@ module.exports = async function handler(req, res) {
     'Objetivo: pentesting web o seguridad de redes en equipos que protejan infraestructura critica.'
   ].join(' ');
 
+  const recentContext = recentQuestions.length
+    ? recentQuestions.map((item, idx) => `${idx + 1}) ${item}`).join('\n')
+    : 'Sin historial reciente.';
+
+  const recentBotContext = recentBotAnswers.length
+    ? recentBotAnswers.map((item, idx) => `${idx + 1}) ${item}`).join('\n')
+    : 'Sin respuestas previas del asistente.';
+
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_MODEL}:generateContent?key=${apiKey}`;
 
   try {
@@ -97,14 +129,14 @@ module.exports = async function handler(req, res) {
           {
             role: 'user',
             parts: [
-              { text: `${systemPrompt}\n\nContexto:\n${profileContext}\n\nPregunta del visitante: ${question}` }
+              { text: `${systemPrompt}\n\nContexto del perfil:\n${profileContext}\n\nHistorial reciente del chat (ultimas 3 preguntas):\n${recentContext}\n\nUltimas 2 respuestas del asistente:\n${recentBotContext}\n\nPregunta actual del visitante: ${question}` }
             ],
           },
         ],
         generationConfig: {
-          temperature: 0.4,
+          temperature: 0.3,
           maxOutputTokens: 220,
-          topP: 0.9,
+          topP: 0.85,
         },
       }),
     });

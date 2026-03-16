@@ -41,6 +41,8 @@ const MIN_FORM_FILL_MS = 5000;
 const MAX_LINKS_IN_MESSAGE = 3;
 const ABOUT_AI_API_ENDPOINT = '/api/about-ai';
 const ABOUT_AI_TIMEOUT_MS = 12000;
+const ABOUT_AI_CONTEXT_WINDOW = 3;
+const ABOUT_AI_BOT_CONTEXT_WINDOW = 2;
 
 /* ── Language system ────────────────────────────── */
 const LANG_KEY = 'portfolio-lang';
@@ -142,32 +144,81 @@ let mailFormOpenedAt = Date.now();
 
 const ABOUT_AI_RESPONSES = [
   {
-    patterns: ['estudias', 'estudio', 'universidad', 'umsa', 'informatica'],
-    answer: 'Estoy estudiando Informatica en la UMSA, con foco en ciberseguridad, redes y analisis forense digital.',
+    patterns: ['estudias', 'estudio', 'universidad', 'umsa', 'informatica', 'computer science', 'education'],
+    answers: {
+      es: 'Estoy estudiando Informatica en la UMSA. Mi enfoque academico actual combina ciberseguridad, redes y analisis forense digital.',
+      en: 'I am studying Computer Science at UMSA. My current academic focus combines cybersecurity, networking, and digital forensics.',
+    },
   },
   {
-    patterns: ['enfoque', 'ciberseguridad', 'seguridad', 'pentesting', 'web'],
-    answer: 'Mi enfoque principal es la ciberseguridad aplicada: evaluacion de vulnerabilidades web, hardening de autenticacion y seguridad de redes.',
+    patterns: ['enfoque', 'ciberseguridad', 'seguridad', 'pentesting', 'web', 'owasp', 'security', 'focus'],
+    answers: {
+      es: 'Mi enfoque principal es la ciberseguridad aplicada: evaluacion de vulnerabilidades web, hardening de autenticacion y seguridad de redes con enfoque practico.',
+      en: 'My main focus is applied cybersecurity: web vulnerability assessment, authentication hardening, and practical network security.',
+    },
   },
   {
-    patterns: ['experiencia', 'practica', 'internship', 'geologicas', 'redes'],
-    answer: 'Realice practica profesional en IT y Redes en la Facultad de Ciencias Geologicas (UMSA): inventario de hardware, mapeo de red e implementacion de servidor Linux.',
+    patterns: ['experiencia', 'practica', 'internship', 'geologicas', 'redes', 'it', 'laboratorio', 'server'],
+    answers: {
+      es: 'Realice practica profesional en IT y Redes en la Facultad de Ciencias Geologicas (UMSA): inventario de hardware, mapeo de topologia de red e implementacion de servidor Linux.',
+      en: 'I completed a professional internship in IT and Networks at the Faculty of Geological Sciences (UMSA): hardware inventory, network topology mapping, and Linux server implementation.',
+    },
   },
   {
-    patterns: ['proyectos', 'proyecto', 'biblioteca juridica', 'passgen', 'inventario'],
-    answer: 'Mis proyectos destacados incluyen Biblioteca Juridica (Supabase + OAuth hardening + RLS), PassGen (Web Crypto API) y un script de inventario de red para infraestructura Windows.',
+    patterns: ['proyectos', 'proyecto', 'biblioteca juridica', 'passgen', 'inventario', 'projects', 'portfolio'],
+    answers: {
+      es: 'Proyectos destacados: Biblioteca Juridica (Supabase + OAuth hardening + RLS), PassGen (Web Crypto API) y un script .bat de inventario de red para infraestructura Windows.',
+      en: 'Highlighted projects: Legal Library (Supabase + OAuth hardening + RLS), PassGen (Web Crypto API), and a .bat network inventory script for Windows infrastructure.',
+    },
   },
   {
-    patterns: ['idioma', 'idiomas', 'ingles', 'espanol'],
-    answer: 'Hablo espanol nativo e ingles nivel B1.',
+    patterns: ['habilidades', 'skills', 'stack', 'herramientas', 'tools', 'tecnologias', 'tech'],
+    answers: {
+      es: 'Trabajo con JavaScript, Python, PHP, SQL, Linux/Kali, Git/GitHub, Supabase y fundamentos de auditoria de seguridad web (CSP, sanitizacion XSS, hashing, RLS).',
+      en: 'I work with JavaScript, Python, PHP, SQL, Linux/Kali, Git/GitHub, Supabase, and web security auditing fundamentals (CSP, XSS sanitization, hashing, RLS).',
+    },
   },
   {
-    patterns: ['objetivo', 'meta', 'futuro', 'carrera'],
-    answer: 'Mi objetivo es crecer hacia roles de pentesting web o seguridad de redes, aportando en equipos que protejan infraestructura critica.',
+    patterns: ['destacas', 'destacar', 'fortaleza', 'fortalezas', 'fuerte', 'strength', 'strengths', 'best at'],
+    answers: {
+      es: 'Me destaco en analisis de seguridad web y en enfoque tecnico-practico: identificar vulnerabilidades, documentarlas claramente y proponer mitigaciones concretas.',
+      en: 'I stand out in web security analysis and a practical technical approach: identifying vulnerabilities, documenting them clearly, and proposing concrete mitigations.',
+    },
   },
   {
-    patterns: ['contacto', 'contactarte', 'email', 'linkedin', 'github'],
-    answer: 'Puedes contactarme por email, LinkedIn o GitHub desde la seccion contact del portfolio.',
+    patterns: ['eso lo aplicaste', 'aplicaste', 'aplicas', 'proyectos reales', 'real projects', 'applied in projects'],
+    answers: {
+      es: 'Si. Lo aplique en proyectos reales como Biblioteca Juridica (hardening OAuth, RLS y auditoria) y PassGen (Web Crypto API). Tambien en practica profesional con inventario y mapeo de red.',
+      en: 'Yes. I applied it in real projects such as Legal Library (OAuth hardening, RLS, and auditing) and PassGen (Web Crypto API), and also during my internship with inventory and network mapping.',
+    },
+  },
+  {
+    patterns: ['donde fue tu practica', 'donde hiciste tu practica', 'where was your internship', 'where did you do your internship'],
+    answers: {
+      es: 'Mi practica profesional fue en IT y Redes de la Facultad de Ciencias Geologicas de la UMSA, en La Paz.',
+      en: 'My professional internship was in IT and Networks at the Faculty of Geological Sciences at UMSA, in La Paz.',
+    },
+  },
+  {
+    patterns: ['idioma', 'idiomas', 'ingles', 'espanol', 'english', 'spanish', 'language', 'languages'],
+    answers: {
+      es: 'Hablo espanol nativo e ingles nivel B1.',
+      en: 'I speak native Spanish and English at B1 level.',
+    },
+  },
+  {
+    patterns: ['objetivo', 'meta', 'futuro', 'carrera', 'goal', 'future', 'career'],
+    answers: {
+      es: 'Mi objetivo es crecer hacia roles de pentesting web o seguridad de redes, aportando en equipos que protejan infraestructura critica.',
+      en: 'My goal is to grow into web pentesting or network security roles, contributing to teams that protect critical infrastructure.',
+    },
+  },
+  {
+    patterns: ['contacto', 'contactarte', 'email', 'linkedin', 'github', 'contact', 'reach'],
+    answers: {
+      es: 'Puedes contactarme por email, LinkedIn o GitHub desde la seccion de contacto del portfolio.',
+      en: 'You can contact me via email, LinkedIn, or GitHub from the portfolio contact section.',
+    },
   },
 ];
 
@@ -342,22 +393,63 @@ function normalizeQuestion(text) {
     .trim();
 }
 
-function getAboutAiAnswer(question) {
+function scoreIntentMatch(normalizedQuestion, patterns) {
+  let score = 0;
+  for (const pattern of patterns) {
+    if (!pattern) continue;
+    if (normalizedQuestion.includes(pattern)) score += pattern.length > 5 ? 2 : 1;
+  }
+  return score;
+}
+
+function isGreeting(normalizedQuestion) {
+  return /^(hola|hello|hi|buenas|buenos dias|good morning|good afternoon|hey)\b/.test(normalizedQuestion);
+}
+
+function getAboutAiAnswer(question, recentQuestions = [], recentBotAnswers = []) {
   const normalized = normalizeQuestion(question);
   if (!normalized) return I18N[currentLang]['ai-empty'];
 
+  if (isGreeting(normalized)) {
+    return currentLang === 'es'
+      ? 'Hola. Puedo contarte sobre estudios, experiencia, proyectos, stack, objetivo profesional o contacto. Que te gustaria saber primero?'
+      : 'Hi. I can tell you about studies, experience, projects, stack, career goals, or contact info. What would you like to know first?';
+  }
+
+  let bestItem = null;
+  let bestScore = 0;
+  const recentContext = normalizeQuestion([
+    ...(recentQuestions || []),
+    ...(recentBotAnswers || []),
+  ].join(' '));
+
   for (const item of ABOUT_AI_RESPONSES) {
-    if (item.patterns.some(pattern => normalized.includes(pattern))) {
-      return item.answer;
+    const scoreCurrent = scoreIntentMatch(normalized, item.patterns);
+    const scoreContext = recentContext ? scoreIntentMatch(recentContext, item.patterns) : 0;
+    const score = (scoreCurrent * 3) + Math.min(scoreContext, 2);
+    if (score > bestScore) {
+      bestScore = score;
+      bestItem = item;
     }
+  }
+
+  if (bestItem && bestScore > 0) {
+    return bestItem.answers[currentLang] || bestItem.answers.es;
   }
 
   return I18N[currentLang]['ai-fallback'];
 }
 
-async function fetchAboutAiFromApi(question) {
+async function fetchAboutAiFromApi(question, recentQuestions = [], recentBotAnswers = []) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), ABOUT_AI_TIMEOUT_MS);
+
+  const contextQuestions = Array.isArray(recentQuestions)
+    ? recentQuestions.slice(-ABOUT_AI_CONTEXT_WINDOW)
+    : [];
+  const contextBotAnswers = Array.isArray(recentBotAnswers)
+    ? recentBotAnswers.slice(-ABOUT_AI_BOT_CONTEXT_WINDOW)
+    : [];
 
   try {
     const response = await fetch(ABOUT_AI_API_ENDPOINT, {
@@ -365,7 +457,11 @@ async function fetchAboutAiFromApi(question) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({
+        question,
+        recentQuestions: contextQuestions,
+        recentBotAnswers: contextBotAnswers,
+      }),
       signal: controller.signal,
     });
 
@@ -384,12 +480,12 @@ async function fetchAboutAiFromApi(question) {
   }
 }
 
-async function getAboutAiAnswerSmart(question) {
+async function getAboutAiAnswerSmart(question, recentQuestions = [], recentBotAnswers = []) {
   try {
-    return await fetchAboutAiFromApi(question);
+    return await fetchAboutAiFromApi(question, recentQuestions, recentBotAnswers);
   } catch (error) {
     console.warn('About AI API unavailable, using local fallback:', error);
-    return getAboutAiAnswer(question);
+    return getAboutAiAnswer(question, recentQuestions, recentBotAnswers);
   }
 }
 
@@ -409,6 +505,8 @@ function bindAboutAiAssistant() {
   const chat = editorPane.querySelector('#aboutAiChat');
   if (!form || !input || !submitBtn || !chat) return;
   const defaultButtonLabel = submitBtn.textContent;
+  const recentQuestions = [];
+  const recentBotAnswers = [];
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -419,6 +517,10 @@ function bindAboutAiAssistant() {
     }
 
     appendAboutAiMessage(chat, question, 'user');
+    recentQuestions.push(question);
+    if (recentQuestions.length > ABOUT_AI_CONTEXT_WINDOW) {
+      recentQuestions.splice(0, recentQuestions.length - ABOUT_AI_CONTEXT_WINDOW);
+    }
     input.value = '';
 
     submitBtn.disabled = true;
@@ -426,9 +528,13 @@ function bindAboutAiAssistant() {
     const thinkingMsg = appendAboutAiMessage(chat, I18N[currentLang]['ai-thinking-msg'], 'thinking');
 
     try {
-      const answer = await getAboutAiAnswerSmart(question);
+      const answer = await getAboutAiAnswerSmart(question, recentQuestions, recentBotAnswers);
       thinkingMsg.remove();
       appendAboutAiMessage(chat, answer, 'bot');
+      recentBotAnswers.push(answer);
+      if (recentBotAnswers.length > ABOUT_AI_BOT_CONTEXT_WINDOW) {
+        recentBotAnswers.splice(0, recentBotAnswers.length - ABOUT_AI_BOT_CONTEXT_WINDOW);
+      }
     } catch (error) {
       thinkingMsg.remove();
       appendAboutAiMessage(chat, I18N[currentLang]['ai-error-msg'], 'bot');
