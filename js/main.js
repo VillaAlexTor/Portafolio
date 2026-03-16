@@ -43,6 +43,8 @@ const ABOUT_AI_API_ENDPOINT = '/api/about-ai';
 const ABOUT_AI_TIMEOUT_MS = 12000;
 const ABOUT_AI_CONTEXT_WINDOW = 3;
 const ABOUT_AI_BOT_CONTEXT_WINDOW = 2;
+const ABOUT_AI_SESSION_KEY = 'about-ai-session-v1';
+const ABOUT_AI_MAX_MESSAGES = 30;
 
 /* ── Language system ────────────────────────────── */
 const LANG_KEY = 'portfolio-lang';
@@ -498,6 +500,45 @@ function appendAboutAiMessage(chat, text, role = 'bot') {
   return msg;
 }
 
+function loadAboutAiSession() {
+  try {
+    const raw = sessionStorage.getItem(ABOUT_AI_SESSION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    return parsed;
+  } catch (_) {
+    return null;
+  }
+}
+
+function saveAboutAiSession(messages, recentQuestions, recentBotAnswers) {
+  try {
+    const safeMessages = Array.isArray(messages)
+      ? messages
+          .filter((item) => item && typeof item.text === 'string' && (item.role === 'user' || item.role === 'bot'))
+          .slice(-ABOUT_AI_MAX_MESSAGES)
+      : [];
+    const safeQuestions = Array.isArray(recentQuestions)
+      ? recentQuestions.filter(Boolean).slice(-ABOUT_AI_CONTEXT_WINDOW)
+      : [];
+    const safeBotAnswers = Array.isArray(recentBotAnswers)
+      ? recentBotAnswers.filter(Boolean).slice(-ABOUT_AI_BOT_CONTEXT_WINDOW)
+      : [];
+
+    sessionStorage.setItem(
+      ABOUT_AI_SESSION_KEY,
+      JSON.stringify({
+        messages: safeMessages,
+        recentQuestions: safeQuestions,
+        recentBotAnswers: safeBotAnswers,
+      })
+    );
+  } catch (_) {
+    // Ignore storage issues (private mode/quota), chat still works in-memory.
+  }
+}
+
 function bindAboutAiAssistant() {
   const form = editorPane.querySelector('#aboutAiForm');
   const input = editorPane.querySelector('#aboutAiInput');
@@ -505,22 +546,43 @@ function bindAboutAiAssistant() {
   const chat = editorPane.querySelector('#aboutAiChat');
   if (!form || !input || !submitBtn || !chat) return;
   const defaultButtonLabel = submitBtn.textContent;
-  const recentQuestions = [];
-  const recentBotAnswers = [];
+  const initialBotText = chat.querySelector('.about-ai-msg-bot')?.textContent?.trim() || '';
+  const session = loadAboutAiSession();
+  const recentQuestions = Array.isArray(session?.recentQuestions) ? session.recentQuestions.slice(-ABOUT_AI_CONTEXT_WINDOW) : [];
+  const recentBotAnswers = Array.isArray(session?.recentBotAnswers) ? session.recentBotAnswers.slice(-ABOUT_AI_BOT_CONTEXT_WINDOW) : [];
+  const messageLog = Array.isArray(session?.messages) && session.messages.length
+    ? session.messages
+        .filter((item) => item && typeof item.text === 'string' && (item.role === 'user' || item.role === 'bot'))
+        .slice(-ABOUT_AI_MAX_MESSAGES)
+    : (initialBotText ? [{ role: 'bot', text: initialBotText }] : []);
+
+  chat.innerHTML = '';
+  for (const msg of messageLog) {
+    appendAboutAiMessage(chat, msg.text, msg.role);
+  }
+
+  const persistSession = () => saveAboutAiSession(messageLog, recentQuestions, recentBotAnswers);
+  persistSession();
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const question = input.value.trim();
     if (!question) {
       appendAboutAiMessage(chat, I18N[currentLang]['ai-empty'], 'bot');
+      messageLog.push({ role: 'bot', text: I18N[currentLang]['ai-empty'] });
+      if (messageLog.length > ABOUT_AI_MAX_MESSAGES) messageLog.splice(0, messageLog.length - ABOUT_AI_MAX_MESSAGES);
+      persistSession();
       return;
     }
 
     appendAboutAiMessage(chat, question, 'user');
+    messageLog.push({ role: 'user', text: question });
+    if (messageLog.length > ABOUT_AI_MAX_MESSAGES) messageLog.splice(0, messageLog.length - ABOUT_AI_MAX_MESSAGES);
     recentQuestions.push(question);
     if (recentQuestions.length > ABOUT_AI_CONTEXT_WINDOW) {
       recentQuestions.splice(0, recentQuestions.length - ABOUT_AI_CONTEXT_WINDOW);
     }
+    persistSession();
     input.value = '';
 
     submitBtn.disabled = true;
@@ -531,13 +593,19 @@ function bindAboutAiAssistant() {
       const answer = await getAboutAiAnswerSmart(question, recentQuestions, recentBotAnswers);
       thinkingMsg.remove();
       appendAboutAiMessage(chat, answer, 'bot');
+      messageLog.push({ role: 'bot', text: answer });
+      if (messageLog.length > ABOUT_AI_MAX_MESSAGES) messageLog.splice(0, messageLog.length - ABOUT_AI_MAX_MESSAGES);
       recentBotAnswers.push(answer);
       if (recentBotAnswers.length > ABOUT_AI_BOT_CONTEXT_WINDOW) {
         recentBotAnswers.splice(0, recentBotAnswers.length - ABOUT_AI_BOT_CONTEXT_WINDOW);
       }
+      persistSession();
     } catch (error) {
       thinkingMsg.remove();
       appendAboutAiMessage(chat, I18N[currentLang]['ai-error-msg'], 'bot');
+      messageLog.push({ role: 'bot', text: I18N[currentLang]['ai-error-msg'] });
+      if (messageLog.length > ABOUT_AI_MAX_MESSAGES) messageLog.splice(0, messageLog.length - ABOUT_AI_MAX_MESSAGES);
+      persistSession();
       console.error('About AI failed:', error);
     } finally {
       submitBtn.disabled = false;
