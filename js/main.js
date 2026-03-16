@@ -78,6 +78,10 @@ const I18N = {
     'ai-thinking-msg': 'Analizando tu pregunta...',
     'ai-error-msg': 'No pude responder ahora mismo. Intenta nuevamente en unos segundos.',
     'ai-fallback': 'Buena pregunta. Puedo responder sobre estudios, experiencia, proyectos, habilidades, idiomas, objetivo profesional y formas de contacto.',
+    'ai-status-ready': 'Estado: listo',
+    'ai-status-api': 'Estado: conectado a Gemini',
+    'ai-status-fallback': 'Estado: modo local (fallback)',
+    'ai-cleared': 'Conversacion limpiada.',
     'mail-sending': 'Enviando correo...',
     'mail-sent': 'Correo enviado correctamente.',
     'mail-sent-fallback': 'Correo enviado correctamente (fallback del formulario).',
@@ -121,6 +125,10 @@ const I18N = {
     'ai-thinking-msg': 'Analyzing your question...',
     'ai-error-msg': "Couldn't respond right now. Please try again in a few seconds.",
     'ai-fallback': 'Good question. I can answer about studies, experience, projects, skills, languages, professional goals and contact methods.',
+    'ai-status-ready': 'Status: ready',
+    'ai-status-api': 'Status: connected to Gemini',
+    'ai-status-fallback': 'Status: local mode (fallback)',
+    'ai-cleared': 'Conversation cleared.',
     'mail-sending': 'Sending email...',
     'mail-sent': 'Email sent successfully.',
     'mail-sent-fallback': 'Email sent successfully (form fallback).',
@@ -484,10 +492,14 @@ async function fetchAboutAiFromApi(question, recentQuestions = [], recentBotAnsw
 
 async function getAboutAiAnswerSmart(question, recentQuestions = [], recentBotAnswers = []) {
   try {
-    return await fetchAboutAiFromApi(question, recentQuestions, recentBotAnswers);
+    const answer = await fetchAboutAiFromApi(question, recentQuestions, recentBotAnswers);
+    return { answer, source: 'api' };
   } catch (error) {
     console.warn('About AI API unavailable, using local fallback:', error);
-    return getAboutAiAnswer(question, recentQuestions, recentBotAnswers);
+    return {
+      answer: getAboutAiAnswer(question, recentQuestions, recentBotAnswers),
+      source: 'fallback',
+    };
   }
 }
 
@@ -539,11 +551,34 @@ function saveAboutAiSession(messages, recentQuestions, recentBotAnswers) {
   }
 }
 
+function setAboutAiStatus(statusEl, mode = 'ready') {
+  if (!statusEl) return;
+
+  statusEl.classList.remove('is-api', 'is-fallback');
+
+  if (mode === 'api') {
+    statusEl.textContent = I18N[currentLang]['ai-status-api'];
+    statusEl.classList.add('is-api');
+    return;
+  }
+
+  if (mode === 'fallback') {
+    statusEl.textContent = I18N[currentLang]['ai-status-fallback'];
+    statusEl.classList.add('is-fallback');
+    return;
+  }
+
+  statusEl.textContent = I18N[currentLang]['ai-status-ready'];
+}
+
 function bindAboutAiAssistant() {
   const form = editorPane.querySelector('#aboutAiForm');
   const input = editorPane.querySelector('#aboutAiInput');
   const submitBtn = editorPane.querySelector('.about-ai-btn');
   const chat = editorPane.querySelector('#aboutAiChat');
+  const clearBtn = editorPane.querySelector('#aboutAiClearBtn');
+  const statusEl = editorPane.querySelector('#aboutAiStatus');
+  const suggestBtns = editorPane.querySelectorAll('.about-ai-suggest');
   if (!form || !input || !submitBtn || !chat) return;
   const defaultButtonLabel = submitBtn.textContent;
   const initialBotText = chat.querySelector('.about-ai-msg-bot')?.textContent?.trim() || '';
@@ -561,8 +596,42 @@ function bindAboutAiAssistant() {
     appendAboutAiMessage(chat, msg.text, msg.role);
   }
 
+  setAboutAiStatus(statusEl, 'ready');
+
   const persistSession = () => saveAboutAiSession(messageLog, recentQuestions, recentBotAnswers);
   persistSession();
+
+  suggestBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const suggestion = btn.dataset.question;
+      if (!suggestion) return;
+      input.value = suggestion;
+      if (typeof form.requestSubmit === 'function') {
+        form.requestSubmit();
+      } else {
+        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      }
+    });
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      messageLog.length = 0;
+      recentQuestions.length = 0;
+      recentBotAnswers.length = 0;
+
+      chat.innerHTML = '';
+      if (initialBotText) {
+        appendAboutAiMessage(chat, initialBotText, 'bot');
+        messageLog.push({ role: 'bot', text: initialBotText });
+      }
+
+      setAboutAiStatus(statusEl, 'ready');
+      persistSession();
+      showToast(I18N[currentLang]['ai-cleared'], 'info', 2000);
+      input.focus();
+    });
+  }
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -590,21 +659,23 @@ function bindAboutAiAssistant() {
     const thinkingMsg = appendAboutAiMessage(chat, I18N[currentLang]['ai-thinking-msg'], 'thinking');
 
     try {
-      const answer = await getAboutAiAnswerSmart(question, recentQuestions, recentBotAnswers);
+      const result = await getAboutAiAnswerSmart(question, recentQuestions, recentBotAnswers);
       thinkingMsg.remove();
-      appendAboutAiMessage(chat, answer, 'bot');
-      messageLog.push({ role: 'bot', text: answer });
+      appendAboutAiMessage(chat, result.answer, 'bot');
+      messageLog.push({ role: 'bot', text: result.answer });
       if (messageLog.length > ABOUT_AI_MAX_MESSAGES) messageLog.splice(0, messageLog.length - ABOUT_AI_MAX_MESSAGES);
-      recentBotAnswers.push(answer);
+      recentBotAnswers.push(result.answer);
       if (recentBotAnswers.length > ABOUT_AI_BOT_CONTEXT_WINDOW) {
         recentBotAnswers.splice(0, recentBotAnswers.length - ABOUT_AI_BOT_CONTEXT_WINDOW);
       }
+      setAboutAiStatus(statusEl, result.source === 'api' ? 'api' : 'fallback');
       persistSession();
     } catch (error) {
       thinkingMsg.remove();
       appendAboutAiMessage(chat, I18N[currentLang]['ai-error-msg'], 'bot');
       messageLog.push({ role: 'bot', text: I18N[currentLang]['ai-error-msg'] });
       if (messageLog.length > ABOUT_AI_MAX_MESSAGES) messageLog.splice(0, messageLog.length - ABOUT_AI_MAX_MESSAGES);
+      setAboutAiStatus(statusEl, 'fallback');
       persistSession();
       console.error('About AI failed:', error);
     } finally {

@@ -52,7 +52,18 @@
 
 <section class="about-ai-lab" aria-label="Personal AI space">
 	<div class="about-ai-lab-head">
-		<span class="about-ai-kicker">PERSONAL AI</span>
+		<div class="about-ai-head-row">
+			<span class="about-ai-kicker">PERSONAL AI</span>
+			<button type="button" class="about-ai-clear-btn" id="aboutAiClearBtn">Clear conversation</button>
+		</div>
+		<div class="about-ai-status" id="aboutAiStatus" aria-live="polite">Status: ready</div>
+	</div>
+
+	<div class="about-ai-suggestions" id="aboutAiSuggestions" aria-label="Quick AI suggestions">
+		<button type="button" class="about-ai-suggest" data-question="What skills do you have?">Skills</button>
+		<button type="button" class="about-ai-suggest" data-question="What do you stand out in the most?">What are your strengths?</button>
+		<button type="button" class="about-ai-suggest" data-question="Did you apply that in real projects?">Applied in real projects?</button>
+		<button type="button" class="about-ai-suggest" data-question="Where was your internship?">Where was your internship?</button>
 	</div>
 
 	<div class="about-ai-chat" id="aboutAiChat" aria-live="polite" aria-label="AI chat history">

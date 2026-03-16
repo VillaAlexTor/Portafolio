@@ -521,12 +521,72 @@ body {
   margin-bottom: 12px;
 }
 
+.about-ai-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .about-ai-kicker {
   display: inline-block;
   font-size: 10px;
   letter-spacing: 1.4px;
   color: var(--accent2);
   margin-bottom: 4px;
+}
+
+.about-ai-clear-btn {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-hover) 72%, transparent 28%);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.about-ai-clear-btn:hover {
+  color: var(--text-bright);
+  border-color: color-mix(in srgb, var(--accent2) 44%, var(--border) 56%);
+}
+
+.about-ai-status {
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.about-ai-status.is-api {
+  color: #10b981;
+}
+
+.about-ai-status.is-fallback {
+  color: #f59e0b;
+}
+
+.about-ai-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.about-ai-suggest {
+  border: 1px solid color-mix(in srgb, var(--accent2) 36%, var(--border) 64%);
+  background: color-mix(in srgb, var(--bg-tabs) 76%, transparent 24%);
+  color: var(--text-bright);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.about-ai-suggest:hover {
+  border-color: color-mix(in srgb, var(--accent2) 62%, var(--border) 38%);
+  background: color-mix(in srgb, var(--bg-active) 82%, transparent 18%);
 }
 
 .about-ai-title {
@@ -633,7 +693,7 @@ body {
 }
 
 .about-ai-chat {
-  margin-top: 12px;
+  margin-top: 0;
   border: 1px solid var(--border);
   background: color-mix(in srgb, var(--bg-terminal) 88%, transparent 12%);
   border-radius: 7px;

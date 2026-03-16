@@ -1,4 +1,9 @@
 const DEFAULT_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+const RATE_WINDOW_MS = 60 * 1000;
+const RATE_MAX_REQUESTS = 16;
+const RATE_BLOCK_MS = 2 * 60 * 1000;
+const MAX_CONTEXT_CHARS = 1800;
+const rateBuckets = new Map();
 
 function sanitizeQuestion(text) {
   return String(text || '').trim().slice(0, 320);
@@ -18,6 +23,46 @@ function sanitizeRecentBotAnswers(value) {
     .map((item) => String(item || '').trim().slice(0, 420))
     .filter(Boolean)
     .slice(-2);
+}
+
+function getClientIp(req) {
+  const xff = req.headers['x-forwarded-for'];
+  if (typeof xff === 'string' && xff.trim()) return xff.split(',')[0].trim();
+  if (Array.isArray(xff) && xff[0]) return String(xff[0]).trim();
+  return String(req.socket?.remoteAddress || req.connection?.remoteAddress || 'unknown');
+}
+
+function consumeRateLimit(ip) {
+  const now = Date.now();
+  const key = ip || 'unknown';
+  const bucket = rateBuckets.get(key) || { hits: [], blockedUntil: 0 };
+
+  if (bucket.blockedUntil > now) {
+    const retryAfter = Math.max(1, Math.ceil((bucket.blockedUntil - now) / 1000));
+    return { allowed: false, retryAfter };
+  }
+
+  bucket.hits = bucket.hits.filter((ts) => now - ts < RATE_WINDOW_MS);
+  bucket.hits.push(now);
+
+  if (bucket.hits.length > RATE_MAX_REQUESTS) {
+    bucket.blockedUntil = now + RATE_BLOCK_MS;
+    rateBuckets.set(key, bucket);
+    return { allowed: false, retryAfter: Math.ceil(RATE_BLOCK_MS / 1000) };
+  }
+
+  rateBuckets.set(key, bucket);
+
+  // Soft cleanup to keep memory bounded.
+  if (rateBuckets.size > 2000) {
+    for (const [bucketKey, value] of rateBuckets.entries()) {
+      const activeHits = value.hits.filter((ts) => now - ts < RATE_WINDOW_MS);
+      const stillBlocked = value.blockedUntil > now;
+      if (!activeHits.length && !stillBlocked) rateBuckets.delete(bucketKey);
+    }
+  }
+
+  return { allowed: true, retryAfter: 0 };
 }
 
 function extractAnswer(payload) {
@@ -60,6 +105,14 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  const ip = getClientIp(req);
+  const rate = consumeRateLimit(ip);
+  if (!rate.allowed) {
+    res.setHeader('Retry-After', String(rate.retryAfter));
+    res.status(429).json({ error: 'Too many requests', retryAfter: rate.retryAfter });
+    return;
+  }
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     res.status(503).json({ error: 'Missing GEMINI_API_KEY' });
@@ -80,6 +133,12 @@ module.exports = async function handler(req, res) {
 
   if (!question) {
     res.status(400).json({ error: 'Question is required' });
+    return;
+  }
+
+  const contextSize = recentQuestions.join(' ').length + recentBotAnswers.join(' ').length;
+  if (contextSize > MAX_CONTEXT_CHARS) {
+    res.status(400).json({ error: 'Context too long' });
     return;
   }
 
