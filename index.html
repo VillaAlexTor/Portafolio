@@ -63,7 +63,7 @@
       <div class="tb-menu">
         <span class="tb-menu-item" data-i18n="menu-file">Archivo</span>
         <span class="tb-menu-item" data-i18n="menu-edit">Editar</span>
-        <span class="tb-menu-item" data-i18n="menu-select">Selecionar</span>
+        <span class="tb-menu-item" data-i18n="menu-select">Seleccionar</span>
         <span class="tb-menu-item" data-i18n="menu-view">Ver</span>
         <span class="tb-menu-item" data-i18n="menu-go">Ir</span>
         <span class="tb-menu-item" data-i18n="menu-run">Iniciar</span>
@@ -116,7 +116,7 @@
         </div>
         <div class="sidebar-file" data-file="projects" onclick="openFile('projects')">
           <span class="file-icon icon-json">{}</span>
-          <span data-i18n="file-projects">projectos.json</span>
+          <span data-i18n="file-projects">proyectos.json</span>
         </div>
         <div class="sidebar-file" data-file="skills" onclick="openFile('skills')">
           <span class="file-icon icon-sh">$</span>
@@ -195,13 +195,13 @@
   <div class="mail-app" id="mailApp" aria-hidden="true">
     <div class="mail-window">
       <div class="mail-window-title">
-        <span>Mail Compose</span>
+        <span data-i18n="mail-compose-title">Redactar correo</span>
         <div class="mail-title-actions">
           <button type="submit" id="mailSendBtn" class="mail-send-btn top-send-btn" form="mailForm">
             <span class="send-label">Enviar correo</span>
             <span class="send-spinner" aria-hidden="true"></span>
           </button>
-          <button type="button" id="mailCloseBtn" class="mail-close-btn" aria-label="Cerrar app de correo">✕</button>
+          <button type="button" id="mailCloseBtn" class="mail-close-btn" data-i18n-aria="mail-close-aria" aria-label="Cerrar app de correo">✕</button>
         </div>
       </div>
       <form id="mailForm" class="mail-form">

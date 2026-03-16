@@ -16,6 +16,15 @@ function extractAnswer(payload) {
 }
 
 async function readJsonBody(req) {
+  // In serverless runtimes (like Vercel), body may be pre-parsed.
+  if (req && typeof req.body === 'object' && req.body !== null) {
+    return req.body;
+  }
+
+  if (typeof req.body === 'string') {
+    return req.body.trim() ? JSON.parse(req.body) : {};
+  }
+
   const chunks = [];
   for await (const chunk of req) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
@@ -24,15 +33,6 @@ async function readJsonBody(req) {
   const raw = Buffer.concat(chunks).toString('utf8').trim();
   if (raw) {
     return JSON.parse(raw);
-  }
-
-  // In some runtimes the body stream is already consumed and parsed into req.body.
-  if (req && typeof req.body === 'object' && req.body !== null) {
-    return req.body;
-  }
-
-  if (typeof req.body === 'string') {
-    return req.body.trim() ? JSON.parse(req.body) : {};
   }
 
   return {};

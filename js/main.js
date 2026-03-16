@@ -50,7 +50,7 @@ const I18N = {
   es: {
     loading: 'Cargando...',
     'err-loading': f => `// Error cargando ${f}`,
-    'menu-file': 'Archivo', 'menu-edit': 'Editar', 'menu-select': 'Selecionar',
+    'menu-file': 'Archivo', 'menu-edit': 'Editar', 'menu-select': 'Seleccionar',
     'menu-view': 'Ver', 'menu-go': 'Ir', 'menu-run': 'Iniciar',
     'menu-terminal': 'Terminal', 'menu-help': 'Ayuda',
     'sidebar-header': 'Explorar',
@@ -63,6 +63,9 @@ const I18N = {
     'mail-ph-subject': 'Quiero contactarte para...',
     'mail-ph-message': 'Escribe tu mensaje...',
     'mail-send': 'Enviar correo',
+    'mail-compose-title': 'Redactar correo',
+    'mail-close-aria': 'Cerrar app de correo',
+    'mail-open-subject': 'Contacto desde portfolio',
     'mail-tip': 'Tip: puedes volver al IDE con el boton X o desde la barra de tareas.',
     'taskbar-mail': 'Correo',
     'theme-dark': 'Modo oscuro', 'theme-light': 'Modo claro',
@@ -103,6 +106,9 @@ const I18N = {
     'mail-ph-subject': "I'd like to contact you about...",
     'mail-ph-message': 'Write your message...',
     'mail-send': 'Send email',
+    'mail-compose-title': 'Mail Compose',
+    'mail-close-aria': 'Close mail app',
+    'mail-open-subject': 'Contact from portfolio',
     'mail-tip': 'Tip: you can return to the IDE using the X button or from the taskbar.',
     'taskbar-mail': 'Mail',
     'theme-dark': 'Dark mode', 'theme-light': 'Light mode',
@@ -209,6 +215,10 @@ function applyTranslations() {
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
     const key = el.dataset.i18nPh;
     if (typeof tk[key] === 'string') el.placeholder = tk[key];
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const key = el.dataset.i18nAria;
+    if (typeof tk[key] === 'string') el.setAttribute('aria-label', tk[key]);
   });
   document.documentElement.lang = currentLang;
   updateThemeToggle(document.body.dataset.theme);
@@ -463,7 +473,7 @@ function bindContactActions() {
   const openButton = editorPane.querySelector('[data-open-mail-app="true"]');
   if (!openButton) return;
   openButton.addEventListener('click', () => {
-    openMailApp({ subject: 'Contacto desde portfolio' });
+    openMailApp({ subject: I18N[currentLang]['mail-open-subject'] });
   });
 }
 
@@ -581,7 +591,7 @@ function initMailForm() {
     }
 
     isMailSending = true;
-    setSendButtonState({ loading: true, disabled: true, label: 'Enviando...' });
+    setSendButtonState({ loading: true, disabled: true, label: I18N[currentLang]['mail-sending'] });
     showToast(I18N[currentLang]['mail-sending'], 'info', 1600);
 
     try {
